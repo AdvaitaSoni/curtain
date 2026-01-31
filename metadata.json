@@ -1,0 +1,10 @@
+{
+  "cinnamon-version": ["5.0"],
+  "uuid": "tileRice@AdvaitaSoni",
+  "name": "tileRice",
+  "description": "Tiles your windows using algorithm",
+  "version": "0.0.1",
+  "url": "https://github.com/shuairan/gTile",
+  "author": "AdvaitaSoni",
+  "last-edited": 1760819814
+}

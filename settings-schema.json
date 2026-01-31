@@ -1,0 +1,11 @@
+{
+  "section1": {
+    "type": "section",
+    "description": "key board bindings"
+  },
+  "mykey": {
+    "type": "keybinding",
+    "default": "<Control>a",
+    "description": "trying if this is the windows key or not"
+  }
+}
