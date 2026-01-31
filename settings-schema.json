@@ -3,7 +3,17 @@
     "type": "section",
     "description": "key board bindings"
   },
-  "mykey": {
+  "key1": {
+    "type": "keybinding",
+    "default": "<Control>a",
+    "description": "trying if this is the windows key or not"
+  },
+  "key2": {
+    "type": "keybinding",
+    "default": "<Control>a",
+    "description": "trying if this is the windows key or not"
+  },
+  "key3": {
     "type": "keybinding",
     "default": "<Control>a",
     "description": "trying if this is the windows key or not"
