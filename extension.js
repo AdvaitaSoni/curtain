@@ -75,21 +75,10 @@ class KeyHandler {
     }
     updateKeybinding(key) {
         if (this.settingsMap[key] && this.keyMap[key] && this.settingsMap[key].length > 0) {
-            global.log("keys printing are ", key, " and type = ", typeof key);
-            global.log("keymap is ", this.keyMap);
-            global.log("keymap entry is ", this.keyMap[key]);
-            global.log(
-                "arg1 : ",
-                this.keyMap[key].id,
-                " & arg2 : ",
-                this.settingsMap[key],
-            );
             Main.keybindingManager.addHotKey(
-                this.keyMap[key].id,
-                this.settingsMap[key],
+                this.keyMap[key].id, this.settingsMap[key],
                 () => {
                     GLib.timeout_add(GLib.PRIORITY_DEFAULT, EVENT_GAP, () => {
-                        global.log("keybinding done"); //!!TESTING
                         this.keyMap[key].event();
                         return GLib.SOURCE_REMOVE;
                     });
@@ -99,17 +88,14 @@ class KeyHandler {
     }
 
     updateAllKeyBindings() {
-        global.log("called all update method");
         for (const [key, _] of Object.entries(this.settingsMap)) {
             this.updateKeybinding(key);
         }
     }
     destroyKey(key) {
-        if (!this.keyMap[key])
-            Print(
-                ` ${UUID} : FAILED TO DESTORY KEYHANLDER : Error in key map : KEY=${key} NOT FOUND!!! - value is `,
-                this.keyMap,
-            );
+        if (!this.keyMap[key]) {
+            Print(` ${UUID} : FAILED TO DESTORY KEYHANLDER : Error in key map : KEY=${key} NOT FOUND!!! - value is `, this.keyMap, );
+        }
         Main.keybindingManager.removeHotKey(this.keyMap[key].id);
     }
     destroy() {
@@ -121,7 +107,6 @@ class KeyHandler {
 class myExtension {
     constructor(desc) {
         this.description = desc;
-        //loads the keyMap from Settings
         this.keyHandler = new KeyHandler();
     }
     destroy() {
@@ -129,76 +114,17 @@ class myExtension {
     }
 }
 
-// function setKeybinding() {
-//     if (
-//         extension.settings_config.keyMap.mykey &&
-//         extension.settings_config.keyMap.mykey.length > 0
-//     )
-//         print("value of mykey was ", extension.settings_config.keyMap.mykey)
-//     Main.keybindingManager.addHotKey(
-//         keyid,
-//         extension.settings_config.keyMap.mykey,
-//         () => {
-//             GLib.timeout_add(GLib.PRIORITY_DEFAULT, 50, () => {
-//                 print("hey did you press windows key? ", null);
-//                 return GLib.SOURCE_REMOVE;
-//             });
-//         },
-//     );
-// }
-
 // -------------------------------SETUP FUNCTIONS
-function init() {
-    global.log();
+function init(metadata) {
+    extension = new myExtension(metadata)
 }
 
 function enable() {
-    extension = new myExtension("hello");
-    // extension.settingsObj = new Settings.ExtensionSettings(
-    //     extension.settings_config.keyMap,
-    //     UUID,
-    // );
-    // extension.settingsObj.bindProperty(
-    //     Settings.BindingDirection.IN,
-    //     key,
-    //     key,
-    //     setKeybinding,
-    //     null,
-    // );
-    // print("settingsObject is ", extension.settingsObj);
-    // setKeybinding();
-    //!! TESTING CODE
-    //   setTimeout(() => {
-    //     global.log("This message appears after 2 seconds");
-    //   }, 2000);
-    //   global.log("This runs immediately");
-
-    // _grabId = global.display.connect(
-    //     "grab-op-begin",
-    //     (display, screen, window, op) => {
-    //         global.log("hey you are grabbing now");
-    //         global.log("display is ", JSON.stringify(display));
-    //         print("window is ", window);
-    //         print("screen is ", screen);
-    //         print("op is", op);
-    //         print("display is same? ", global.display == display);
-    //         print("screen is same? ", global.screen == screen);
-    //     },
-    // );
-    // _ungrabId = global.display.connect("grab-op-end", () =>
-    //     global.log("you are now NOT grabbing"),
-    // );
-    // global.log("display OBject is ", global.display);
-    // global.log("this is printed when the extension is enabled");
-    //!! TESTING ENDS
+    if (!extension) extension = new myExtension(DESCRIPTION)
 }
 
 function disable() {
     extension.destroy();
     extension = null;
-    // global.display.disconnect(_grabId);
-    // global.display.disconnect(_ungrabId);
-    // global.log("this is printed when the extension is disabled");
-}
 
-function init() {}
+}
