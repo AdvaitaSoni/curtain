@@ -2,6 +2,7 @@ const Settings = imports.ui.settings;
 const Main = imports.ui.main;
 const GLib = imports.gi.GLib;
 
+
 //----------------------- CONSTANTS
 const UUID = "tileRice@AdvaitaSoni";
 const MAP = {
@@ -15,8 +16,8 @@ const MAP = {
     },
     key3: {
         id: "key3",
-        event: event3
-    }
+        event: event3,
+    },
 };
 const EVENT_GAP = 50;
 
@@ -31,16 +32,33 @@ function print(str, object) {
 }
 
 //------------------------- EVENTS
+let previous = null;
+let current = null;
+
 function event1() {
+    //@use for debugging for now
+    // let window = null
+    let window = global.display.focus_window
+    print("window in focus is ", window);
+    if (!previous) {
+        previous = current = window;
+    } else {
+        previous = current;
+        current = window;
+    }
+    print("window previous = ", previous);
+    print("window current = ", current);
     global.log("this is event1");
 }
 
 function event2() {
+    previous.activate(global.get_current_time());
+    //attempt to make previous as new focused
     global.log("this is event2");
 }
 
 function event3() {
-    global.log("this is event3")
+    global.log("this is event3");
 }
 //------------------------- CLASSES
 class KeyHandler {
@@ -58,8 +76,10 @@ class KeyHandler {
         for (const [key, _] of Object.entries(this.settingsMap)) {
             this.settings.bindProperty(
                 Settings.BindingDirection.IN,
-                key, key,
-                () => this.updateKeybinding(key), null,
+                key,
+                key,
+                () => this.updateKeybinding(key),
+                null,
             );
         }
         this.updateAllKeyBindings();
@@ -67,16 +87,24 @@ class KeyHandler {
 
     updateEvent(key, eventCallback) {
         if (!this.keyMap[key]) {
-            print(` ${UUID} : FAILED TO UPDATE EVENT : Error in key map - value is `, this.keyMap);
+            print(
+                ` ${UUID} : FAILED TO UPDATE EVENT : Error in key map - value is `,
+                this.keyMap,
+            );
             return;
         }
         this.keyMap[key].event = eventCallback;
         this.updateKeybinding(key);
     }
     updateKeybinding(key) {
-        if (this.settingsMap[key] && this.keyMap[key] && this.settingsMap[key].length > 0) {
+        if (
+            this.settingsMap[key] &&
+            this.keyMap[key] &&
+            this.settingsMap[key].length > 0
+        ) {
             Main.keybindingManager.addHotKey(
-                this.keyMap[key].id, this.settingsMap[key],
+                this.keyMap[key].id,
+                this.settingsMap[key],
                 () => {
                     GLib.timeout_add(GLib.PRIORITY_DEFAULT, EVENT_GAP, () => {
                         this.keyMap[key].event();
@@ -94,7 +122,10 @@ class KeyHandler {
     }
     destroyKey(key) {
         if (!this.keyMap[key]) {
-            Print(` ${UUID} : FAILED TO DESTORY KEYHANLDER : Error in key map : KEY=${key} NOT FOUND!!! - value is `, this.keyMap, );
+            Print(
+                ` ${UUID} : FAILED TO DESTORY KEYHANLDER : Error in key map : KEY=${key} NOT FOUND!!! - value is `,
+                this.keyMap,
+            );
         }
         Main.keybindingManager.removeHotKey(this.keyMap[key].id);
     }
@@ -116,15 +147,14 @@ class myExtension {
 
 // -------------------------------SETUP FUNCTIONS
 function init(metadata) {
-    extension = new myExtension(metadata)
+    extension = new myExtension(metadata);
 }
 
 function enable() {
-    if (!extension) extension = new myExtension(DESCRIPTION)
+    if (!extension) extension = new myExtension(DESCRIPTION);
 }
 
 function disable() {
     extension.destroy();
     extension = null;
-
 }
