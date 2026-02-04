@@ -12,7 +12,6 @@ class EventManager {
     current;
     windowMgr;
 
-
     static inst;
     static get instance() {
         if (EventManager.inst) {
@@ -51,9 +50,12 @@ class EventManager {
         // global.log(global.)
         // global.log("hello from event 1");
         try {
-            this.windowMgr.focusNext();
+            // this.windowMgr.focusNext(); //@Passed
+            //   this.windowMgr.swapNext(); //@Passed
+            // this.windowMgr.arrange() //@Passed
+            this.windowMgr.moveNext();
         } catch (e) {
-            global.log("error in event1 ", e.message)
+            global.log("error in event1 ", e.message);
         }
         // global.log("monitor is ", this.windowMgr.getCurrentMonitor());
         // global.log("monitor is ", )
@@ -81,7 +83,7 @@ class EventManager {
         // previous.activate(global.get_current_time());
         //attempt to make previous as new focused
         let w = this.windowMgr.getFocusedWindow();
-        global.log("focused window details", w.x, w.y, w.width, w.height)
+        global.log("focused window details", w.x, w.y, w.width, w.height);
     }
 
     event3() {

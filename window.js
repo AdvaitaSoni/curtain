@@ -23,7 +23,7 @@ class WindowManager {
     }
 
     //@UTILITY METHODS
-    transformWindowActorWithAnimation(actor, rect, animate = true, time = 0.3, transition = "linear") {
+    transformWindowActorWithAnimation(actor, rect, animate = true, time = 0.1, transition = "linear") {
         let metaWindow = actor.get_meta_window();
 
         if (!animate) {
@@ -57,8 +57,8 @@ class WindowManager {
         }
     }
 
-    transformWindowActorWithAnimationByVector(actor, vector, animate = true, time = 0.3, transition = "linear") {
-        let frameRect = actor.get_meta_window().get_frame_rect;
+    transformWindowActorWithAnimationByVector(actor, vector, animate = true, time = 0.1, transition = "linear") {
+        let frameRect = actor.get_meta_window().get_frame_rect();
         let rect = {
             x: frameRect.x + vector.x,
             y: frameRect.y + vector.y,
@@ -213,57 +213,9 @@ class WindowManager {
         //@ EVENT METHODS 
 
     getNext() {
-            let windows = this.getVisibleWindowsOnCurrentMonitorByAlgo()
-            return windows[1 % windows.length];
-        }
-        // getNext() {
-        //     let currentWindowActors = this.getVisibleWindowsOnCurrentMonitorBySize();
-        //     DEBUG.print("current window actors are ", currentWindowActors)
-        //     if (!currentWindowActors || !currentWindowActors.length) return; //can't do anything in this case
-        //     let focusedWindow = this.getFocusedWindow();
-        //     DEBUG.print("focused windows is ", focusedWindow)
-        //     let nextWindow;
-        //     if (!focusedWindow) {
-        //         //select the largest windows
-        //         // let area = 0;
-        //         // currentWindowActors.forEach((win) => {
-        //         //     let winArea = win.get_meta_window().get_frame_rect().area()
-        //         //     if (winArea > area) {
-        //         //         nextWindow = win;
-        //         //         area = winArea;
-        //         //     }
-        //         // });
-        //         nextWindow = currentWindowActors[0]
-        //     } else {
-        //         //select the windows with the next largest area
-        //         let focusedArea = focusedWindow.get_meta_window().get_frame_rect().area()
-        //             // let diff = focusedArea;
-        //         nextWindow = focusedWindow
-
-    //         // currentWindowActors.forEach((win) => {
-    //         //     if (win == focusedWindow) return;
-    //         //     let winArea = win.get_meta_window().get_frame_rect().area()
-    //         //     let newdiff = focusedArea - winArea;
-    //         //     if (newdiff <= diff) {
-    //         //         nextWindow = win;
-    //         //         diff = newdiff;
-    //         //     }
-    //         // });
-    //         if (focusedWindow == currentWindowActors[currentWindowActors - 1]) {
-    //             nextWindow = currentWindowActors[0];
-    //         } else {
-    //             for (let i = 0; i < currentWindowActors.length; i++) {
-    //                 let winArea = currentWindowActors[i].get_meta_window().get_frame_rect().area();
-    //                 if (winArea < focusedArea) {
-    //                     nextWindow = currentWindowActors[i];
-    //                     break;
-    //                 }
-    //             };
-    //         }
-    //     }
-    //     DEBUG.print("next Window is ", nextWindow)
-    //     return nextWindow;
-    // }
+        let windows = this.getVisibleWindowsOnCurrentMonitorByAlgo()
+        return windows[1 % windows.length];
+    }
 
     //focusNext will focus on the nextWindow if there is one(even if it is the same) else return nulll
     focusNext() {
@@ -306,7 +258,7 @@ class WindowManager {
     //if windows are 0 don't do anything else if windows are there start from the focused else the largest window
     arrange() {
         //step1: find the focused window
-        let focusedWindows = this.getFocusedWindow();
+        // let focusedWindows = this.getFocusedWindow();
         //step2 : getAllTheWindowsOpened and sort them by size excluding the focused window(if there) which will be placed at the start
         let windows = this.getVisibleWindowsOnCurrentMonitorByAlgo();
         let monitor = this.getCurrentMonitor() //will have x,y, width, height 
@@ -351,13 +303,10 @@ class WindowManager {
             //step4 : arrange the windows accordingly
             this.transformWindowActorWithAnimation(windows[i], rect)
         }
-
-
     }
-
     moveNext() {
         //move 
-        //step 1: if focused windows doesn't exist arrane,focus on the half secren window and exit
+        //step 1: if focused windows doesn't exist arrange,focus on the half secren window and exit
         let focusedWindow = this.getFocusedWindow();
         if (!focusedWindow) {
             this.arrange();
@@ -408,6 +357,7 @@ class WindowManager {
             //todo: add tolerance if time
         if (vector.x == 0 || vector.y == 0) {
             //step 5: move the focused window in direction to new coordinates
+
             this.transformWindowActorWithAnimationByVector(focusedWindow, vector)
                 //step 6: translate all the ohter windows to new coordinates
             let revVector = {
@@ -422,7 +372,8 @@ class WindowManager {
                 }
             }
         } else {
-            arrange(windows, focusedWindowIndex)
+            this.arrange(windows, focusedWindowIndex);
+            // this.focusNext() NO NEED AS FOCUS WILL ALWAYS BE ON THE ALREADY FOCUSED WINDOW
         }
     }
 }
