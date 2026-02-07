@@ -8,7 +8,6 @@ const Meta = imports.gi.Meta;
 const SignalManager = imports.misc.signalManager;
 
 class WindowManager {
-    _monitorMap; //map of monitorIndex to actors list is this necessary and even would work if we precompute
     signalManager;
     static inst;
 
@@ -21,9 +20,13 @@ class WindowManager {
     }
 
     constructor() {
-        this._monitorMap = {};
         this.signalManager = new SignalManager.SignalManager();
         this.connectAllSignals();
+    }
+
+    destroy() {
+        this.disconnectAllSignals();
+        this.signalManager = null
     }
 
     //@UTILITY METHODS
@@ -35,7 +38,8 @@ class WindowManager {
         transition = "linear",
     ) {
         let metaWindow = actor.get_meta_window();
-
+        // let frame = metaWindow.get_frame_rect()
+        // if (frame.x == rect.x && frame.y == rect.y && frame.width == rect.width && frame.height == rect.height) return;
         if (!animate) {
             ////!! sudden movement section
             metaWindow.move_resize_frame(
@@ -102,47 +106,35 @@ class WindowManager {
         );
     }
 
-    // updateLayoutDetails() {
-    //     let windowActorsInWorkspace = Main.getWindowActorsForWorkspace(
-    //         this.getCurrentWorkspaceIndex(),
-    //     );
-    //     // let globalWindowActors = global.get_window_actors(); // same as above
-    //     // let allwindowactors = Meta.get_window_actors(global.display);
-    //     windowActorsInWorkspace.forEach((actor) => {
-    //         if (!actor || actor.is_destroyed()) return;
-    //         let metaWindow = actor.get_meta_window();
-    //         if (metaWindow.get_window_type() == 0) {
-    //             let monitorIdx = Main.layoutManager.findMonitorIndexForActor(actor);
-    //             if (!this._monitorMap[monitorIdx]) {
-    //                 this._monitorMap[monitorIdx] = []; //if not assigned
-    //             }
-    //             this._monitorMap[monitorIdx].push(actor);
-    //         }
-    //     });
-    // }
-
     getMonitorForActor(actor) {
         return Main.layoutManager.findMonitorForActor(actor);
     }
 
-    metaWindowsAreAdjacent(metaWin1, metaWin2, cutoff = 0) { //common is specified in px and all the common lengths below common are rejected
+    metaWindowsAreAdjacent(metaWin1, metaWin2, cutoff = 0) {
+        //common is specified in px and all the common lengths below common are rejected
         let frame1 = {
             x1: metaWin1.get_frame_rect().x,
             y1: metaWin1.get_frame_rect().y,
             x2: metaWin1.get_frame_rect().x + metaWin1.get_frame_rect().width,
-            y2: metaWin1.get_frame_rect().y + metaWin1.get_frame_rect().height
-        }
+            y2: metaWin1.get_frame_rect().y + metaWin1.get_frame_rect().height,
+        };
         let frame2 = {
             x1: metaWin2.get_frame_rect().x,
             y1: metaWin2.get_frame_rect().y,
             x2: metaWin2.get_frame_rect().x + metaWin2.get_frame_rect().width,
-            y2: metaWin2.get_frame_rect().y + metaWin2.get_frame_rect().height
-        }
+            y2: metaWin2.get_frame_rect().y + metaWin2.get_frame_rect().height,
+        };
 
-        if (frame1.y1 == frame2.y2 || frame1.y2 == frame2.y1) { //for sharing top-edge and bottom-edge
-            return (Math.min(frame1.x2, frame2.x2) - Math.max(frame1.x1, frame2.x1)) > cutoff
-        } else if (frame1.x1 == frame2.x2 || frame1.x2 == frame2.x1) { //for sharing left and right edge
-            return (Math.min(frame1.y2, frame2.y2) - Math.max(frame1.y1, frame2.y1)) > cutoff
+        if (frame1.y1 == frame2.y2 || frame1.y2 == frame2.y1) {
+            //for sharing top-edge and bottom-edge
+            return (
+                Math.min(frame1.x2, frame2.x2) - Math.max(frame1.x1, frame2.x1) > cutoff
+            );
+        } else if (frame1.x1 == frame2.x2 || frame1.x2 == frame2.x1) {
+            //for sharing left and right edge
+            return (
+                Math.min(frame1.y2, frame2.y2) - Math.max(frame1.y1, frame2.y1) > cutoff
+            );
         }
     }
 
@@ -212,8 +204,13 @@ class WindowManager {
         );
         // global.log("window created status : ", !window.is_destroyed())
         global.log("window type is ", window.get_window_type());
+        if (window.get_window_type() != 0) {
+            global.log("returning since type of window is not 0");
+            return;
+        }
         global.log("window description is ", window.get_description());
         global.log("window app id is ", window.get_gtk_application_id());
+        this.screenAppear();
     }
 
     //todo: on leaving the window, layout of window left is automatically done but on entering the window, layout of entered window adjusting automatically will depend on user
@@ -223,6 +220,10 @@ class WindowManager {
         );
         let window = actor.get_meta_window();
         global.log("window type is ", window.get_window_type());
+        if (window.get_window_type() != 0) {
+            global.log("returning since type of window is not 0");
+            return;
+        }
         global.log("window description is ", window.get_description());
         global.log("window app id is ", window.get_gtk_application_id());
         // this.arrange()
@@ -232,7 +233,7 @@ class WindowManager {
         try {
             let value = this.screenDisapper(window);
             if (value && value == -1) {
-                global.log("screen disappear function exited cleanly")
+                global.log("screen disappear function exited cleanly");
             }
         } catch (e) {
             global.log("got an error on screen disapper", e.message);
@@ -245,6 +246,10 @@ class WindowManager {
         );
         let window = actor.get_meta_window();
         global.log("window type is ", window.get_window_type());
+        if (window.get_window_type() != 0) {
+            global.log("returning since type of window is not 0");
+            return;
+        }
         global.log("window description is ", window.get_description());
         global.log("window app id is ", window.get_gtk_application_id());
         // this.arrange()
@@ -352,7 +357,7 @@ class WindowManager {
         //@is actually of type metaWindow
         //step 1: find all the windows on monitor by size whether they are hidden or not
         // global.log("closed window is visible??", !closedWindow.is_hidden()); //@TRUE closed window is visible
-        let closedWindowArea = closedWindow.get_frame_rect().area()
+        let closedWindowArea = closedWindow.get_frame_rect().area();
         let windows = this.getVisibleWindowsOnCurrentMonitorBySize();
 
         // let closedWindowIndex;
@@ -361,22 +366,22 @@ class WindowManager {
         let targetArea = closedWindowArea;
         for (let i = 0; i < windows.length; i++) {
             let win = windows[i];
-            let metaWin = win.get_meta_window()
+            let metaWin = win.get_meta_window();
             if (metaWin == closedWindow) continue;
             if (this.metaWindowsAreAdjacent(metaWin, shouldBeAdjacentTo)) {
-                let winArea = metaWin.get_frame_rect().area()
+                let winArea = metaWin.get_frame_rect().area();
                 if (winArea <= targetArea) {
-                    windowsToRepaint.push(win)
-                    shouldBeAdjacentTo = metaWin
-                    targetArea = winArea
+                    windowsToRepaint.push(win);
+                    shouldBeAdjacentTo = metaWin;
+                    targetArea = winArea;
                 }
             }
         }
-        global.log("windowsToRepaint are ", windowsToRepaint)
-        if (windowsToRepaint.length == 0) return -1 //todo handle gracefully
+        global.log("windowsToRepaint are ", windowsToRepaint);
+        if (windowsToRepaint.length == 0) return -1; //todo handle gracefully
 
-        let metaWin1 = closedWindow
-        let metaWin2 = windowsToRepaint[0].get_meta_window()
+        let metaWin1 = closedWindow;
+        let metaWin2 = windowsToRepaint[0].get_meta_window();
         let frame1 = {
             x1: metaWin1.get_frame_rect().x,
             y1: metaWin1.get_frame_rect().y,
@@ -384,7 +389,7 @@ class WindowManager {
             y2: metaWin1.get_frame_rect().y + metaWin1.get_frame_rect().height,
             height: metaWin1.get_frame_rect().height,
             width: metaWin1.get_frame_rect().width,
-        }
+        };
         let frame2 = {
             x1: metaWin2.get_frame_rect().x,
             y1: metaWin2.get_frame_rect().y,
@@ -392,44 +397,70 @@ class WindowManager {
             y2: metaWin2.get_frame_rect().y + metaWin2.get_frame_rect().height,
             height: metaWin2.get_frame_rect().height,
             width: metaWin2.get_frame_rect().width,
-        }
-        global.log("frame1 is ", frame1)
-        global.log("frame2 is ", frame2)
+        };
+        global.log("frame1 is ", frame1);
+        global.log("frame2 is ", frame2);
 
-        let rect = {}
-        if (frame1.y1 == frame2.y2 || frame1.y2 == frame2.y1) { //for sharing top-edge and bottom-edge
+        let rect = {};
+        if (frame1.y1 == frame2.y2 || frame1.y2 == frame2.y1) {
+            //for sharing top-edge and bottom-edge
             //condn: both should have the same x1 and height
             if (frame1.x1 == frame2.x1 && frame1.height == frame2.height) {
                 rect = {
                     x: frame1.x1,
                     y: Math.min(frame1.y1, frame2.y1),
                     width: Math.max(frame1.width, frame2.width),
-                    height: frame1.height * 2
-                }
-            } else return -1 //todo handle gracefully
-            global.log("vertical sharing")
-        } else if (frame1.x1 == frame2.x2 || frame1.x2 == frame2.x1) { //for sharing left and right edge
+                    height: frame1.height * 2,
+                };
+            } else return -1; //todo handle gracefully
+            global.log("vertical sharing");
+        } else if (frame1.x1 == frame2.x2 || frame1.x2 == frame2.x1) {
+            //for sharing left and right edge
             //condn: both should have the same y1 and width
             if (frame1.y1 == frame2.y1 && frame1.width == frame2.width) {
-                global.log("conditions satisfied")
+                global.log("conditions satisfied");
                 rect = {
                     x: Math.min(frame1.x1, frame2.x1),
                     y: frame1.y1,
                     width: frame1.width * 2,
                     height: Math.max(frame1.height, frame2.height),
-                }
-            } else return -1 //todo handle gracefully
-            global.log("horizontal sharing")
+                };
+            } else return -1; //todo handle gracefully
+            global.log("horizontal sharing");
         }
-        global.log("rect is ", rect)
+        global.log("rect is ", rect);
         try {
             this.customArrange(windowsToRepaint, rect);
         } catch (e) {
-            global.log("error in custom arrange", e.message)
+            global.log("error in custom arrange", e.message);
         }
     }
 
-    screenAppear(window) {}
+    screenAppear(openedWindow) {
+        let windows =
+            this.getVisibleWindowsOnCurrentMonitorByReversedAlgo(openedWindow);
+        let monitor = this.getCurrentMonitor(); //will have x,y, width, height
+        //step3 : use the half algorithm  - find the monitor rectangle,remaining rect = monitor rectangle and place the ith windows at half or full of the remaining space depeding upon if there are more windows to display
+        // Mainloop.idle_add(Lang.bind(this, function() {
+        this.customArrange(windows, {
+            x: 0,
+            y: 0,
+            width: monitor.width,
+            height: monitor.height,
+        });
+    }
+    getVisibleWindowsOnCurrentMonitorByReversedAlgo(focusedWindow) {
+        // let focusedWindow = this.getFocusedWindow();
+        return this.getVisibleWindowsOnCurrentMonitor().sort((a, b) => {
+            if (a == focusedWindow) return 1;
+            else if (b == focusedWindow) return -1;
+            else
+                return (
+                    b.get_meta_window().get_frame_rect().area() -
+                    a.get_meta_window().get_frame_rect().area()
+                );
+        });
+    }
 
     // onMonitorEntered(_, monitorIndex, window) {
     //     global.log("called on monitor entered ****************************************************")
@@ -530,7 +561,9 @@ class WindowManager {
 
     getVisibleWindowsOnMonitorBySize(monitor) {
         return this.getVisibleWindowsOnMonitor(monitor).sort(
-            (a, b) => b.get_meta_window().get_frame_rect().area() - a.get_meta_window().get_frame_rect().area()
+            (a, b) =>
+            b.get_meta_window().get_frame_rect().area() -
+            a.get_meta_window().get_frame_rect().area(),
         );
     }
 
@@ -544,7 +577,10 @@ class WindowManager {
                 if (a == focusedWindow) return -1;
                 else if (b == focusedWindow) return 1;
                 else
-                    return (b.get_meta_window().get_frame_rect().area() - a.get_meta_window().get_frame_rect().area());
+                    return (
+                        b.get_meta_window().get_frame_rect().area() -
+                        a.get_meta_window().get_frame_rect().area()
+                    );
             });
         }
         //gets next window to focus
@@ -597,17 +633,17 @@ class WindowManager {
     }
 
     //if windows are 0 don't do anything else if windows are there start from the focused else the largest window
-    customArrange(windowsArray, area, index = 0, blacklistMetaWindow = null) {
+    customArrange(windowsArray, area, index = 0) {
         if (index >= windowsArray.length) return;
-        global.log("index is valid")
-        global.log('windowsArray lenght is ', windowsArray.length)
+        global.log("index is valid");
+        global.log("windowsArray lenght is ", windowsArray.length);
         let X = area.x;
         let Y = area.y;
         let widthLeft = area.width;
         let heightLeft = area.height;
-        global.log("area is ", area)
+        global.log("area is ", area);
         for (let i = index; i < windowsArray.length; i++) {
-            // if (windowsArray[i].get_meta_window().is_hidden()) continue; //@assume this case will never be called 
+            // if (windowsArray[i].get_meta_window().is_hidden()) continue; //@assume this case will never be called
             // if (blacklistMetaWindow && windowsArray[i].get_meta_window() == blacklistMetaWindow) continue; //@assume this case will never be called
             let rect;
             if (i == windowsArray.length - 1) {
@@ -640,8 +676,11 @@ class WindowManager {
                 }
             }
             global.log("i is ", i);
-            global.log("window is an instance of ", windowsArray[i] instanceof Meta.WindowActor)
-            global.log("rectangle for this is ", rect)
+            global.log(
+                "window is an instance of ",
+                windowsArray[i] instanceof Meta.WindowActor,
+            );
+            global.log("rectangle for this is ", rect);
             this.transformWindowActorWithAnimation(windowsArray[i], rect);
         }
     }

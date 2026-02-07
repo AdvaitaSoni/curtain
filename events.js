@@ -104,6 +104,10 @@ class EventManager {
     event3() {
         global.log("this is event3");
     }
+    destroy() {
+        this.windowMgr.destroy()
+        this.windowMgr = null
+    }
 }
 
 //! TESTING CODE

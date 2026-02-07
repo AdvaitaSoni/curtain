@@ -113,5 +113,7 @@ class KeyHandler {
         for (const [key, _] of Object.entries(this.keyMap)) {
             this.destroyKey(key);
         }
+        eventMgr.destroy()
+        eventMgr = null
     }
 }
