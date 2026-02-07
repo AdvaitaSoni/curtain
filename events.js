@@ -5,6 +5,8 @@ const Panel = imports.ui.panel;
 const Meta = imports.gi.Meta;
 const Tween = imports.ui.tweener;
 const Clutter = imports.gi.Clutter;
+const Cinnamon = imports.gi.Cinnamon;
+
 //------------------------- EVENTS
 
 class EventManager {
@@ -52,8 +54,18 @@ class EventManager {
         try {
             // this.windowMgr.focusNext(); //@Passed
             //   this.windowMgr.swapNext(); //@Passed
-            // this.windowMgr.arrange() //@Passed
-            this.windowMgr.moveNext();
+            this.windowMgr.arrange(); //@Passed
+            // this.windowMgr.moveNext(); //@Passed
+            // DEBUG.print("cinnamon is", !Cinnamon.Display);
+            // global.log("global is part of constructor", global instanceof Cinnamon_Global)
+            // this.signalManager.connect(global.window_manager, "minimize", () => { global.log("some windows was minimized") }, this);
+            // global.log("connected to minimize signal")
+            let fwin = this.windowMgr
+                .getFocusedWindow()
+                .get_meta_window()
+                .get_frame_rect();
+            global.log("coordinates for focused window is:", fwin.x, fwin.y);
+            // DEBUG.print("global is ", global.constructor.name)
         } catch (e) {
             global.log("error in event1 ", e.message);
         }
@@ -80,9 +92,12 @@ class EventManager {
     }
     event2() {
         global.log("this is event2");
+        // this.signalManager.disconnectAllSignals();
+        // global.log("singals disconnected")
         // previous.activate(global.get_current_time());
         //attempt to make previous as new focused
-        let w = this.windowMgr.getFocusedWindow();
+        let w = this.windowMgr.getFocusedWindow().get_meta_window().get_frame_rect();
+        // this.windowMgr.arrange()
         global.log("focused window details", w.x, w.y, w.width, w.height);
     }
 
