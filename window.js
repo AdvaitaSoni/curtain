@@ -40,6 +40,7 @@ class WindowManager {
         let metaWindow = actor.get_meta_window();
         let frame = metaWindow.get_frame_rect()
         if (frame.x == rect.x && frame.y == rect.y && frame.width == rect.width && frame.height == rect.height) return;
+        metaWindow.unmaximize(Meta.MaximizeFlags.BOTH);
         if (!animate) {
             ////!! sudden movement section
             metaWindow.move_resize_frame(
@@ -189,6 +190,27 @@ class WindowManager {
             this.onWindowCreated,
             this,
         );
+        this.signalManager.connect(global.screen, "window-removed", (_, window) => {
+            global.log("some windows was close ****************************************************");
+            global.log("window type is ", window.get_window_type());
+            if (window.get_window_type() != 0) {
+                global.log("returning since type of window is not 0");
+                return;
+            }
+            global.log("window description is ", window.get_description());
+            global.log("window app id is ", window.get_gtk_application_id());
+            // if the windows is closed is not the minimum sized window this fwill follow arrange algorithm according to size but this may set the moved configuration
+            // so if the windows is not the minimum we find the next largest place and place it in the same point and resize accordingly and we do it for all such windows
+            //if the windows closed is the minimum then we find the just largest window and tell them to occupy the size accordingly
+            try {
+                let value = this.screenDisapper(window);
+                if (value && value == -1) {
+                    global.log("screen disappear function exited cleanly");
+                }
+            } catch (e) {
+                global.log("got an error on screen disapper", e.message);
+            }
+        }, this);
     }
 
     disconnectAllSignals() {
@@ -211,8 +233,8 @@ class WindowManager {
 
     //todo: on leaving the window, layout of window left is automatically done but on entering the window, layout of entered window adjusting automatically will depend on user
     onMinimize(_, actor) {
-        global.log("some windows was close ****************************************************");
         let window = actor.get_meta_window();
+        global.log("some windows was close ****************************************************");
         global.log("window type is ", window.get_window_type());
         if (window.get_window_type() != 0) {
             global.log("returning since type of window is not 0");
