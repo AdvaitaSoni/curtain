@@ -10,7 +10,6 @@ const SignalManager = imports.misc.signalManager;
 class WindowManager {
     signalManager;
     static inst;
-
     static get instance() {
         if (WindowManager.inst) {
             return WindowManager.inst;
@@ -21,6 +20,7 @@ class WindowManager {
 
     constructor() {
         this.signalManager = new SignalManager.SignalManager();
+        this.disconnectAllSignals()
         this.connectAllSignals();
     }
 
@@ -38,8 +38,8 @@ class WindowManager {
         transition = "linear",
     ) {
         let metaWindow = actor.get_meta_window();
-        // let frame = metaWindow.get_frame_rect()
-        // if (frame.x == rect.x && frame.y == rect.y && frame.width == rect.width && frame.height == rect.height) return;
+        let frame = metaWindow.get_frame_rect()
+        if (frame.x == rect.x && frame.y == rect.y && frame.width == rect.width && frame.height == rect.height) return;
         if (!animate) {
             ////!! sudden movement section
             metaWindow.move_resize_frame(
@@ -189,9 +189,6 @@ class WindowManager {
             this.onWindowCreated,
             this,
         );
-        // this.signalManager.connect()
-        // this.signalManager.connect(global.display, "window-entered-monitor", this.onMonitorEntered, this);
-        // this.signalManager.connect(global.display, "window-left-monitor", this.onMonitorLeft, this);
     }
 
     disconnectAllSignals() {
@@ -202,7 +199,6 @@ class WindowManager {
         global.log(
             "some window was created****************************************************",
         );
-        // global.log("window created status : ", !window.is_destroyed())
         global.log("window type is ", window.get_window_type());
         if (window.get_window_type() != 0) {
             global.log("returning since type of window is not 0");
@@ -215,9 +211,7 @@ class WindowManager {
 
     //todo: on leaving the window, layout of window left is automatically done but on entering the window, layout of entered window adjusting automatically will depend on user
     onMinimize(_, actor) {
-        global.log(
-            "some windows was close ****************************************************",
-        );
+        global.log("some windows was close ****************************************************");
         let window = actor.get_meta_window();
         global.log("window type is ", window.get_window_type());
         if (window.get_window_type() != 0) {
@@ -226,7 +220,6 @@ class WindowManager {
         }
         global.log("window description is ", window.get_description());
         global.log("window app id is ", window.get_gtk_application_id());
-        // this.arrange()
         // if the windows is closed is not the minimum sized window this fwill follow arrange algorithm according to size but this may set the moved configuration
         // so if the windows is not the minimum we find the next largest place and place it in the same point and resize accordingly and we do it for all such windows
         //if the windows closed is the minimum then we find the just largest window and tell them to occupy the size accordingly
@@ -241,9 +234,7 @@ class WindowManager {
     }
 
     onMaximize(_, actor) {
-        global.log(
-            "some windows was opened again****************************************************",
-        );
+        global.log("some windows was opened again****************************************************", );
         let window = actor.get_meta_window();
         global.log("window type is ", window.get_window_type());
         if (window.get_window_type() != 0) {
@@ -252,107 +243,8 @@ class WindowManager {
         }
         global.log("window description is ", window.get_description());
         global.log("window app id is ", window.get_gtk_application_id());
-        // this.arrange()
     }
 
-    // screenDisapper(closedWindow) {
-    //     //@is actually of type metaWindow
-    //     //step 1: find all the windows on monitor by size whether they are hidden or not
-    //     global.log("closed window is visible??", !closedWindow.is_hidden());
-    //     let windows = this.getAllWindowsOnCurrentMonitorBySize();
-    //     // global.log("windows is ? ", windows, !windows);
-    //     let closedWindowIndex;
-    //     //step 2: find the index of the window that was closed
-    //     windows.forEach((win, idx) => {
-    //         if (win.get_meta_window() == closedWindow) closedWindowIndex = idx;
-    //     });
-    //     if (closedWindowIndex == null) return; //todo: handle this more gracefully
-    //     global.log("reached closeWindow ??")
-    //         //step 3: find the rectangle of the custom area
-    //         //find the nextLargestwindow that is open
-    //         //find the justLargestWindow that is open
-    //     let closedWindowArea = closedWindow.get_frame_rect().area();
-    //     let nextLargestWindow = null; //should be visible
-    //     let justLargestWindow = null; //should be visible
-    //     //todo: fix edge cases here
-    //     windows.forEach((win, idx) => {
-    //         let metaWin = win.get_meta_window();
-    //         if (metaWin == closedWindow || metaWin.is_hidden()) return;
-    //         let area = metaWin.get_frame_rect().area();
-    //         if (area > closedWindowArea) {
-    //             justLargestWindow = win;
-    //         } else if (area < closedWindowArea && nextLargestWindow == null) {
-    //             nextLargestWindow = win;
-    //         } else if (area == closedWindowArea) {
-    //             justLargestWindow = nextLargestWindow = win;
-    //         }
-    //     });
-    //     if (!nextLargestWindow && !justLargestWindow) return; //todo: again handle this more gracefully
-    //     global.log("reached otherMetaWindow ??")
-    //     let rect = {};
-    //     let otherMetaWindow;
-
-    //     if (nextLargestWindow) {
-    //         otherMetaWindow = nextLargestWindow.get_meta_window();
-    //     } else {
-    //         otherMetaWindow = justLargestWindow.get_meta_winodw();
-    //     }
-
-    //     let X = closedWindow.get_frame_rect().x;
-    //     let Y = closedWindow.get_frame_rect().y;
-    //     let width = closedWindow.get_frame_rect().width;
-    //     let height = closedWindow.get_frame_rect().height;
-    //     let nX = otherMetaWindow.get_frame_rect().x;
-    //     let nY = otherMetaWindow.get_frame_rect().y;
-    //     let nWidth = otherMetaWindow.get_frame_rect().width;
-    //     let nHeight = otherMetaWindow.get_frame_rect().height;
-
-    //     global.log("closed windows is ", X, Y, width, height)
-    //     global.log("otherMetaWindows is ", nX, nY, nWidth, nHeight)
-    //     if (X != nX && Y != nY) return; //todo: handle gracefully
-    //     if (X == nX && Y == nY) return; //todo handle gracefully
-    //     global.log("reached same x and y point??")
-    //     if (
-    //         X == nX &&
-    //         (height != nHeight || Math.min(Y, nY) + height != Math.max(Y, nY))
-    //     ) {
-    //         return; //todo: handle gracefully
-    //     }
-    //     if (
-    //         Y == nY &&
-    //         (width != nWidth || Math.min(X, nX) + width != Math.max(X, nX))
-    //     ) {
-    //         return; //todo: handle gracefully
-    //     }
-    //     global.log("reached rectangle?? ")
-    //     rect.x = Math.min(nX, X);
-    //     rect.y = Math.min(nY, Y);
-    //     // rect.width = X == nX ? height * 2 : Math.max(height, nHeight);
-    //     // rect.height = Y == nY ? width * 2 : Math.max(width, nWidth);
-    //     rect.width = X == nX ? Math.max(width, nWidth) : width * 2;
-    //     rect.height = Y == nY ? Math.max(height, nHeight) : height * 2;
-    //     //step 4: call custom arrange only for windows that are visible find the
-    //     //FIND: the index of the otherMetaWindow in visibleWindows
-    //     let visWindows = this.getVisibleWindowsOnCurrentMonitorBySize();
-    //     let indexForRepaint = -1;
-    //     for (let i = 0; i < visWindows.length; i++) {
-    //         let win = visWindows[i];
-    //         if (win.get_meta_window() == otherMetaWindow) {
-    //             indexForRepaint = i;
-    //             break;
-    //         }
-    //     }
-    //     if (indexForRepaint == -1) return; //todo: handle gracefully
-    //     global.log("reached final call to custom arrange??")
-    //     global.log("rectangle is ", rect)
-    //     global.log("indexForRepaint is ", indexForRepaint)
-    //     global.log("window description is ", otherMetaWindow.get_description());
-    //     global.log("window app id is ", otherMetaWindow.get_gtk_application_id());
-
-    //     this.customArrange(visWindows, indexForRepaint, rect, closedWindow);
-    // }
-
-    //!Testing ScreenDisapperFunction
     screenDisapper(closedWindow) {
         //@is actually of type metaWindow
         //step 1: find all the windows on monitor by size whether they are hidden or not
@@ -439,9 +331,7 @@ class WindowManager {
     screenAppear(openedWindow) {
         let windows =
             this.getVisibleWindowsOnCurrentMonitorByReversedAlgo(openedWindow);
-        let monitor = this.getCurrentMonitor(); //will have x,y, width, height
-        //step3 : use the half algorithm  - find the monitor rectangle,remaining rect = monitor rectangle and place the ith windows at half or full of the remaining space depeding upon if there are more windows to display
-        // Mainloop.idle_add(Lang.bind(this, function() {
+        let monitor = this.getCurrentMonitor();
         this.customArrange(windows, {
             x: 0,
             y: 0,
@@ -449,33 +339,7 @@ class WindowManager {
             height: monitor.height,
         });
     }
-    getVisibleWindowsOnCurrentMonitorByReversedAlgo(focusedWindow) {
-        // let focusedWindow = this.getFocusedWindow();
-        return this.getVisibleWindowsOnCurrentMonitor().sort((a, b) => {
-            if (a == focusedWindow) return 1;
-            else if (b == focusedWindow) return -1;
-            else
-                return (
-                    b.get_meta_window().get_frame_rect().area() -
-                    a.get_meta_window().get_frame_rect().area()
-                );
-        });
-    }
 
-    // onMonitorEntered(_, monitorIndex, window) {
-    //     global.log("called on monitor entered ****************************************************")
-    //     global.log("window type is ", window.get_window_type())
-    //     global.log("window description is ", window.get_description())
-    //     global.log("window app id is ", window.get_gtk_application_id())
-    //     global.log("x is ", monitorIndex)
-    // }
-    // onMonitorLeft(_, monitorIndex, window) {
-    //     global.log("called on monitor left *******************************************************")
-    //     global.log("window type is ", window.get_window_type())
-    //     global.log("window description is ", window.get_description())
-    //     global.log("window app id is ", window.get_gtk_application_id())
-    //     global.log("x is ", monitorIndex)
-    // }
 
     //@FMETHODS TO GET CURRENT STATE
     getCurrentWorkspace() {
@@ -531,6 +395,7 @@ class WindowManager {
             (win) => this.getMonitorForActor(win) == monitor,
         );
     }
+
     getAllWindowsOnCurrentMonitor() {
         return this.getAllWindowsOnMonitor(this.getCurrentMonitor());
     }
@@ -544,6 +409,7 @@ class WindowManager {
             );
         });
     }
+
     getAllWindowsOnCurrentMonitorBySize() {
         return this.getAllWindowsOnMonitorBySize(this.getCurrentMonitor());
     }
@@ -572,22 +438,36 @@ class WindowManager {
     }
 
     getVisibleWindowsOnCurrentMonitorByAlgo() {
-            let focusedWindow = this.getFocusedWindow();
-            return this.getVisibleWindowsOnCurrentMonitor().sort((a, b) => {
-                if (a == focusedWindow) return -1;
-                else if (b == focusedWindow) return 1;
-                else
-                    return (
-                        b.get_meta_window().get_frame_rect().area() -
-                        a.get_meta_window().get_frame_rect().area()
-                    );
-            });
-        }
-        //gets next window to focus
-        //if no windows returns null
-        //window not focused -> largest area window
-        //window focused -> second largest window or the same window
-        //@ EVENT METHODS
+        let focusedWindow = this.getFocusedWindow();
+        return this.getVisibleWindowsOnCurrentMonitor().sort((a, b) => {
+            if (a == focusedWindow) return -1;
+            else if (b == focusedWindow) return 1;
+            else
+                return (
+                    b.get_meta_window().get_frame_rect().area() -
+                    a.get_meta_window().get_frame_rect().area()
+                );
+        });
+    }
+
+    getVisibleWindowsOnCurrentMonitorByReversedAlgo(focusedWindow) {
+        // let focusedWindow = this.getFocusedWindow();
+        return this.getVisibleWindowsOnCurrentMonitor().sort((a, b) => {
+            if (a == focusedWindow) return 1;
+            else if (b == focusedWindow) return -1;
+            else
+                return (
+                    b.get_meta_window().get_frame_rect().area() -
+                    a.get_meta_window().get_frame_rect().area()
+                );
+        });
+    }
+
+    //gets next window to focus
+    //if no windows returns null
+    //window not focused -> largest area window
+    //window focused -> second largest window or the same window
+    //@ EVENT METHODS
 
     getNext() {
         let windows = this.getVisibleWindowsOnCurrentMonitorByAlgo();
@@ -684,9 +564,9 @@ class WindowManager {
             this.transformWindowActorWithAnimation(windowsArray[i], rect);
         }
     }
+
     arrange() {
         //step1: find the focused window
-        // let focusedWindows = this.getFocusedWindow();
         //step2 : getAllTheWindowsOpened and sort them by size excluding the focused window(if there) which will be placed at the start
         let windows = this.getVisibleWindowsOnCurrentMonitorByAlgo();
         let monitor = this.getCurrentMonitor(); //will have x,y, width, height
@@ -698,8 +578,8 @@ class WindowManager {
             height: monitor.height,
         });
     }
+
     moveNext() {
-        //move
         //step 1: if focused windows doesn't exist arrange,focus on the half secren window and exit
         let focusedWindow = this.getFocusedWindow();
         if (!focusedWindow) {

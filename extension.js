@@ -5,28 +5,38 @@ let extension;
 
 //------------------------- EXTENSION
 class myExtension {
-    description
-    keyHandler
-    constructor(desc) {
-        this.description = desc;
-        this.keyHandler = new key.KeyHandler();
-    }
-    destroy() {
-        this.keyHandler.destroy();
-        this.keyHandler = null;
-    }
+  keyHandler;
+  constructor() {
+    this.keyHandler = new key.KeyHandler();
+  }
+  destroy() {
+    this.keyHandler.destroy();
+    this.keyHandler = null;
+  }
 }
 
 // -------------------------------SETUP FUNCTIONS
 function init(metadata) {
-    extension = new myExtension(metadata);
+  try {
+    extension = new myExtension();
+  } catch (e) {
+    global.log("error in init function ", e.message);
+  }
 }
 
 function enable() {
-    if (!extension) extension = new myExtension(DESCRIPTION);
+  try {
+    if (!extension) extension = new myExtension();
+  } catch (e) {
+    global.log("error in enable function ", e.message);
+  }
 }
 
 function disable() {
+  try {
     extension.destroy();
     extension = null;
+  } catch (e) {
+    global.log("error in disable function ", e.message);
+  }
 }
