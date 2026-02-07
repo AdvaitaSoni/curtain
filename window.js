@@ -23,7 +23,6 @@ class WindowManager {
     constructor() {
         this._monitorMap = {};
         this.signalManager = new SignalManager.SignalManager();
-        // this.updateLayoutDetails();
         this.connectAllSignals();
     }
 
@@ -32,7 +31,7 @@ class WindowManager {
         actor,
         rect,
         animate = true,
-        time = 0.1,
+        time = 1,
         transition = "linear",
     ) {
         let metaWindow = actor.get_meta_window();
@@ -84,7 +83,7 @@ class WindowManager {
         actor,
         vector,
         animate = true,
-        time = 0.1,
+        time = 1,
         transition = "linear",
     ) {
         let frameRect = actor.get_meta_window().get_frame_rect();
@@ -103,24 +102,25 @@ class WindowManager {
         );
     }
 
-    updateLayoutDetails() {
-        let windowActorsInWorkspace = Main.getWindowActorsForWorkspace(
-            this.getCurrentWorkspaceIndex(),
-        );
-        // let globalWindowActors = global.get_window_actors(); // same as above
-        // let allwindowactors = Meta.get_window_actors(global.display);
-        windowActorsInWorkspace.forEach((actor) => {
-            if (!actor || actor.is_destroyed()) return;
-            let metaWindow = actor.get_meta_window();
-            if (metaWindow.get_window_type() == 0) {
-                let monitorIdx = Main.layoutManager.findMonitorIndexForActor(actor);
-                if (!this._monitorMap[monitorIdx]) {
-                    this._monitorMap[monitorIdx] = []; //if not assigned
-                }
-                this._monitorMap[monitorIdx].push(actor);
-            }
-        });
-    }
+    // updateLayoutDetails() {
+    //     let windowActorsInWorkspace = Main.getWindowActorsForWorkspace(
+    //         this.getCurrentWorkspaceIndex(),
+    //     );
+    //     // let globalWindowActors = global.get_window_actors(); // same as above
+    //     // let allwindowactors = Meta.get_window_actors(global.display);
+    //     windowActorsInWorkspace.forEach((actor) => {
+    //         if (!actor || actor.is_destroyed()) return;
+    //         let metaWindow = actor.get_meta_window();
+    //         if (metaWindow.get_window_type() == 0) {
+    //             let monitorIdx = Main.layoutManager.findMonitorIndexForActor(actor);
+    //             if (!this._monitorMap[monitorIdx]) {
+    //                 this._monitorMap[monitorIdx] = []; //if not assigned
+    //             }
+    //             this._monitorMap[monitorIdx].push(actor);
+    //         }
+    //     });
+    // }
+
     getMonitorForActor(actor) {
         return Main.layoutManager.findMonitorForActor(actor);
     }
@@ -422,8 +422,11 @@ class WindowManager {
             global.log("horizontal sharing")
         }
         global.log("rect is ", rect)
-
-        this.customArrange(windowsToRepaint, rect);
+        try {
+            this.customArrange(windowsToRepaint, rect);
+        } catch (e) {
+            global.log("error in custom arrange", e.message)
+        }
     }
 
     screenAppear(window) {}
@@ -541,10 +544,7 @@ class WindowManager {
                 if (a == focusedWindow) return -1;
                 else if (b == focusedWindow) return 1;
                 else
-                    return (
-                        b.get_meta_window().get_frame_rect().area() -
-                        a.get_meta_window().get_frame_rect().area()
-                    );
+                    return (b.get_meta_window().get_frame_rect().area() - a.get_meta_window().get_frame_rect().area());
             });
         }
         //gets next window to focus
@@ -607,8 +607,8 @@ class WindowManager {
         let heightLeft = area.height;
         global.log("area is ", area)
         for (let i = index; i < windowsArray.length; i++) {
-            if (windowsArray[i].get_meta_window().is_hidden()) continue;
-            if (blacklistMetaWindow && windowsArray[i].get_meta_window() == blacklistMetaWindow) continue;
+            // if (windowsArray[i].get_meta_window().is_hidden()) continue; //@assume this case will never be called 
+            // if (blacklistMetaWindow && windowsArray[i].get_meta_window() == blacklistMetaWindow) continue; //@assume this case will never be called
             let rect;
             if (i == windowsArray.length - 1) {
                 rect = {
@@ -624,7 +624,7 @@ class WindowManager {
                         x: X,
                         y: Y,
                         width: widthLeft,
-                        heightLeft: heightLeft / 2,
+                        height: heightLeft / 2,
                     };
                     Y += heightLeft / 2;
                     heightLeft = heightLeft / 2;
@@ -640,6 +640,7 @@ class WindowManager {
                 }
             }
             global.log("i is ", i);
+            global.log("window is an instance of ", windowsArray[i] instanceof Meta.WindowActor)
             global.log("rectangle for this is ", rect)
             this.transformWindowActorWithAnimation(windowsArray[i], rect);
         }
@@ -657,47 +658,6 @@ class WindowManager {
             width: monitor.width,
             height: monitor.height,
         });
-        //!! testing removal of below
-        // let widthLeft = monitor.width;
-        // let heightLeft = monitor.height;
-        // let X = monitor.x;
-        // let Y = monitor.y;
-        // for (let i = 0; i < windows.length; i++) {
-        //     // if (monitorHeightLeft > mo)
-        //     let rect;
-        //     if (i == windows.length - 1) {
-        //         //occupy full space
-        //         rect = {
-        //             x: X,
-        //             y: Y,
-        //             width: widthLeft,
-        //             height: heightLeft,
-        //         };
-        //     } else {
-        //         //occupy half space
-        //         if (heightLeft > widthLeft) {
-        //             rect = {
-        //                 x: X,
-        //                 y: Y,
-        //                 width: widthLeft,
-        //                 heightLeft: heightLeft / 2,
-        //             };
-        //             Y += heightLeft / 2;
-        //             heightLeft = heightLeft / 2;
-        //         } else {
-        //             rect = {
-        //                 x: X,
-        //                 y: Y,
-        //                 width: widthLeft / 2,
-        //                 height: heightLeft,
-        //             };
-        //             X += widthLeft / 2;
-        //             widthLeft = widthLeft / 2;
-        //         }
-        //     }
-        //     //step4 : arrange the windows accordingly
-        //     this.transformWindowActorWithAnimation(windows[i], rect);
-        // }
     }
     moveNext() {
         //move
