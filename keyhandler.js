@@ -110,9 +110,9 @@ class KeyHandler {
             this.settingsMap[key] = null;
         }
 
-        this.settings = new Settings.ExtensionSettings(this.settingsMap, UUID);
+        let settings = new Settings.ExtensionSettings(this.settingsMap, UUID);
         for (const [key, _] of Object.entries(this.settingsMap)) {
-            this.settings.bindProperty(
+            settings.bindProperty(
                 Settings.BindingDirection.IN,
                 key,
                 key,
@@ -179,5 +179,7 @@ class KeyHandler {
         }
         eventMgr.destroy()
         eventMgr = null
+        this.keyMap = null
+        this.settingsMap = null
     }
 }

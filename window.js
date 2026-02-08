@@ -27,6 +27,7 @@ class WindowManager {
     destroy() {
         this.disconnectAllSignals();
         this.signalManager = null;
+        WindowManager.inst = null
     }
 
     //@UTILITY METHODS

@@ -11,7 +11,6 @@ const Cinnamon = imports.gi.Cinnamon;
 
 class EventManager {
     windowMgr;
-
     static inst;
     static get instance() {
         if (EventManager.inst) {
@@ -110,6 +109,7 @@ class EventManager {
     destroy() {
         this.windowMgr.destroy()
         this.windowMgr = null
+        EventManager.inst = null;
     }
 
     arrange() {
