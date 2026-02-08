@@ -313,6 +313,7 @@ class WindowManager {
     }
 
     screenAppear(openedWindow) {
+        this.arrange()
         let openedWindowActor = openedWindow.get_compositor_private()
         try {
             let windows = this.getVisibleWindowsOnCurrentMonitorBySize();
@@ -320,39 +321,11 @@ class WindowManager {
             if (windows.length == 1) {
                 windowsToRepaint.push(openedWindow)
             } else {
-                //ignoring the openedWindow
-                //find the window among the smallest area window(s)(will be at most 2) that is on the left or bottom
-                // let smallestWindows = []
                 for (let i = windows.length - 1; i >= 0; i--) {
                     if (windows[i] == openedWindowActor) continue;
                     windowsToRepaint.push(windows[i]);
                     break;
-                    // if (smallestWindows.length == 0) {
-                    //     smallestWindows.push(windows[i]);
-                    // } else if (windows[i].get_meta_window().get_frame_rect().area() == smallestWindows[smallestWindows.length - 1].get_meta_window().get_frame_rect().area()) {
-                    //     smallestWindows.push(windows[i]);
-                    // } else break;
                 }
-                //todo : add a reutrn statement for when more than 2 smallest windows
-                // arrange the smallest windows on the basis of which is first(on left or right)
-                // smallestWindows.sort((a, b) => {
-                //     let frameA = a.get_meta_window().get_frame_rect();
-                //     let frameB = b.get_meta_window().get_frame_rect();
-                //     let centerA = {
-                //         x: frameA.x + (frameA.width / 2),
-                //         y: frameA.y + (frameA.height / 2)
-                //     }
-                //     let centerB = {
-                //         x: frameB.x + (frameB.width / 2),
-                //         y: frameB.y + (frameB.height / 2)
-                //     }
-                //     if ((centerA.x < centerB.x) || (centerA.y < centerB.y)) {
-                //         return -1
-                //     } else {
-                //         return 1
-                //     }
-                // })
-                // windowsToRepaint.push(smallestWindows[smallestWindows.length - 1])
             }
             //!testing
             let currentSmallestWindow = windowsToRepaint[windowsToRepaint.length - 1];
@@ -463,7 +436,24 @@ class WindowManager {
                 let value = b.get_meta_window().get_frame_rect().area() -
                     a.get_meta_window().get_frame_rect().area()
                 if (value != 0) return value;
-                else return (a.get_meta_window().get_id() - b.get_meta_window().get_id())
+                else {
+                    let frameA = a.get_meta_window().get_frame_rect()
+                    let frameB = b.get_meta_window().get_frame_rect();
+                    let centerA = {
+                        x: frameA.x + (frameA.width / 2),
+                        y: frameA.y + (frameA.height / 2)
+                    }
+                    let centerB = {
+                        x: frameB.x + (frameB.width / 2),
+                        y: frameB.y + (frameB.height / 2)
+                    }
+                    if ((centerA.x < centerB.x) || (centerA.y < centerB.y)) {
+                        return -1
+                    } else {
+                        return 1
+                    }
+                }
+
             }
         );
     }
@@ -473,15 +463,32 @@ class WindowManager {
     }
 
 
-    getVisibleWindowsOnCurrentMonitorByReversedAlgo(focusedWindow) {
+    getVisibleWindowsOnCurrentMonitorBySizeWithFocusFirst(focusedWindow) {
         return this.getVisibleWindowsOnCurrentMonitor().sort((a, b) => {
-            if (a == focusedWindow) return 1;
-            else if (b == focusedWindow) return -1;
-            else
-                return (
-                    b.get_meta_window().get_frame_rect().area() -
-                    a.get_meta_window().get_frame_rect().area()
-                );
+            if (a == focusedWindow) return -1;
+            else if (b == focusedWindow) return 1;
+            else {
+                let value = (b.get_meta_window().get_frame_rect().area() -
+                    a.get_meta_window().get_frame_rect().area());
+                if (value != 0) return value;
+                else {
+                    let frameA = a.get_meta_window().get_frame_rect()
+                    let frameB = b.get_meta_window().get_frame_rect();
+                    let centerA = {
+                        x: frameA.x + (frameA.width / 2),
+                        y: frameA.y + (frameA.height / 2)
+                    }
+                    let centerB = {
+                        x: frameB.x + (frameB.width / 2),
+                        y: frameB.y + (frameB.height / 2)
+                    }
+                    if ((centerA.x < centerB.x) || (centerA.y < centerB.y)) {
+                        return -1
+                    } else {
+                        return 1
+                    }
+                }
+            }
         });
     }
 
@@ -673,43 +680,21 @@ class WindowManager {
             }
         } else {
             this.arrange(windows, focusedWindowIndex);
-            // this.focusNext() NO NEED AS FOCUS WILL ALWAYS BE ON THE ALREADY FOCUSED WINDOW
         }
     }
 
-    // kill() {
-    //     let focusedWindow = this.getFocusedWindow()
-    //     let metaWindow = focusedWindow.get_meta_window();
-    //     // metaWindow.kill()
-    //     let pid = metaWindow.get_pid()
-    //     let gid = metaWindow.get_gtk_application_id()
-    //     let id = metaWindow.get_id()
-    //     let hints = metaWindow.mutter_hints
-    //     let sandboxedAppId = metaWindow.get_sandboxed_app_id()
-    //     let stableSeq = metaWindow.get_stable_sequence()
-    //     let startupId = metaWindow.get_startup_id();
-    //     global.log("pid is ", pid)
-    //     global.log("id is", id)
-    //     global.log("gid is", gid)
-    //     global.log("sandboxed id is ", sandboxedAppId);
-    //     global.log("stableSeq is ", stableSeq)
-    //     global.log("startup id is ", startupId);
-    //     DEBUG.print("hints are ", hints)
-    //     return pid
-    // }
-
     halfMaximize() {
-        let [originX, originY, width, height] = this.getUsableScreenArea(this.getCurrentMonitor());
         let focusedWindow = this.getFocusedWindow();
-        let frame = focusedWindow.get_meta_window().get_frame_rect();
-        let midpoint = originX + width / 2;
-        let rec = {
-            x: Math.abs(frame.x - midpoint) >= Math.abs(frame.x - originX) ? midpoint : 0,
-            y: originY,
-            width: width,
-            height: height
+        let [x, y, width, height] = this.getUsableScreenArea(this.getCurrentMonitor());
+        let windows = this.getVisibleWindowsOnCurrentMonitorBySizeWithFocusFirst(focusedWindow);
+        let rect = {
+            x,
+            y,
+            width,
+            height
         }
-        this.transformWindowActorWithAnimation(focusedWindow, rec)
+        this.customArrange(windows, rect)
+            // this.transformWindowActorWithAnimation(windows, rec)
     }
     fullMaximize() {
         let focusedWindow = this.getFocusedWindow();
