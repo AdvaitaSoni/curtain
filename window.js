@@ -176,7 +176,7 @@ class WindowManager {
         this.signalManager.connect(
             global.window_manager,
             "unminimize",
-            this.onMaximize,
+            this.onUnminimize,
             this,
         );
         this.signalManager.connect(
@@ -210,7 +210,7 @@ class WindowManager {
         if (window.get_window_type() != 0) {
             return;
         }
-        this.screenAppear();
+        this.screenAppear(window);
     }
 
     //todo: on leaving the window, layout of window left is automatically done but on entering the window, layout of entered window adjusting automatically will depend on user
@@ -226,13 +226,13 @@ class WindowManager {
         }
     }
 
-    onMaximize(_, actor) {
+    onUnminimize(_, actor) {
         let window = actor.get_meta_window();
         if (window.get_window_type() != 0) {
             return;
         }
         try {
-            this.screenAppear();
+            this.screenAppear(window);
         } catch (e) {
             global.log("got an error on screen appear");
         }
@@ -313,15 +313,60 @@ class WindowManager {
     }
 
     screenAppear(openedWindow) {
+        let openedWindowActor = openedWindow.get_compositor_private()
         try {
-            let windows =
-                this.getVisibleWindowsOnCurrentMonitorByReversedAlgo(openedWindow);
-            let monitor = this.getCurrentMonitor();
-            this.customArrange(windows, {
-                x: 0,
-                y: 0,
-                width: monitor.width,
-                height: monitor.height,
+            let windows = this.getVisibleWindowsOnCurrentMonitorBySize();
+            let windowsToRepaint = []
+            if (windows.length == 1) {
+                windowsToRepaint.push(openedWindow)
+            } else {
+                //ignoring the openedWindow
+                //find the window among the smallest area window(s)(will be at most 2) that is on the left or bottom
+                // let smallestWindows = []
+                for (let i = windows.length - 1; i >= 0; i--) {
+                    if (windows[i] == openedWindowActor) continue;
+                    windowsToRepaint.push(windows[i]);
+                    break;
+                    // if (smallestWindows.length == 0) {
+                    //     smallestWindows.push(windows[i]);
+                    // } else if (windows[i].get_meta_window().get_frame_rect().area() == smallestWindows[smallestWindows.length - 1].get_meta_window().get_frame_rect().area()) {
+                    //     smallestWindows.push(windows[i]);
+                    // } else break;
+                }
+                //todo : add a reutrn statement for when more than 2 smallest windows
+                // arrange the smallest windows on the basis of which is first(on left or right)
+                // smallestWindows.sort((a, b) => {
+                //     let frameA = a.get_meta_window().get_frame_rect();
+                //     let frameB = b.get_meta_window().get_frame_rect();
+                //     let centerA = {
+                //         x: frameA.x + (frameA.width / 2),
+                //         y: frameA.y + (frameA.height / 2)
+                //     }
+                //     let centerB = {
+                //         x: frameB.x + (frameB.width / 2),
+                //         y: frameB.y + (frameB.height / 2)
+                //     }
+                //     if ((centerA.x < centerB.x) || (centerA.y < centerB.y)) {
+                //         return -1
+                //     } else {
+                //         return 1
+                //     }
+                // })
+                // windowsToRepaint.push(smallestWindows[smallestWindows.length - 1])
+            }
+            //!testing
+            let currentSmallestWindow = windowsToRepaint[windowsToRepaint.length - 1];
+            DEBUG.windowPrint("currentSmallestWindow is ", currentSmallestWindow)
+            let x = currentSmallestWindow.get_meta_window().get_frame_rect().x
+            let y = currentSmallestWindow.get_meta_window().get_frame_rect().y
+            let width = currentSmallestWindow.get_meta_window().get_frame_rect().width
+            let height = currentSmallestWindow.get_meta_window().get_frame_rect().height
+            windowsToRepaint.push(openedWindowActor)
+            this.customArrange(windowsToRepaint, {
+                x: x,
+                y: y,
+                width: width,
+                height: height,
             });
         } catch (e) {
             global.log("error in custom arrange", e.message);
@@ -414,9 +459,12 @@ class WindowManager {
 
     getVisibleWindowsOnMonitorBySize(monitor) {
         return this.getVisibleWindowsOnMonitor(monitor).sort(
-            (a, b) =>
-            b.get_meta_window().get_frame_rect().area() -
-            a.get_meta_window().get_frame_rect().area(),
+            (a, b) => {
+                let value = b.get_meta_window().get_frame_rect().area() -
+                    a.get_meta_window().get_frame_rect().area()
+                if (value != 0) return value;
+                else return (a.get_meta_window().get_id() - b.get_meta_window().get_id())
+            }
         );
     }
 
@@ -424,18 +472,6 @@ class WindowManager {
         return this.getVisibleWindowsOnMonitorBySize(this.getCurrentMonitor());
     }
 
-    getVisibleWindowsOnCurrentMonitorByAlgo() {
-        let focusedWindow = this.getFocusedWindow();
-        return this.getVisibleWindowsOnCurrentMonitor().sort((a, b) => {
-            if (a == focusedWindow) return -1;
-            else if (b == focusedWindow) return 1;
-            else
-                return (
-                    b.get_meta_window().get_frame_rect().area() -
-                    a.get_meta_window().get_frame_rect().area()
-                );
-        });
-    }
 
     getVisibleWindowsOnCurrentMonitorByReversedAlgo(focusedWindow) {
         return this.getVisibleWindowsOnCurrentMonitor().sort((a, b) => {
@@ -454,10 +490,18 @@ class WindowManager {
     //window not focused -> largest area window
     //window focused -> second largest window or the same window
     //@ EVENT METHODS
-
     getNext() {
-        let windows = this.getVisibleWindowsOnCurrentMonitorByAlgo();
-        return windows[1 % windows.length];
+        let windows = this.getVisibleWindowsOnCurrentMonitorBySize();
+        let focusedWindow = this.getFocusedWindow();
+        if (window.length == 0) return null;
+        let index = -1;
+        for (let i = 0; i < windows.length; i++) {
+            if (windows[i] == focusedWindow) {
+                index = i;
+                break;
+            }
+        }
+        return windows[(index + 1) % windows.length]
     }
 
     //focusNext will focus on the nextWindow if there is one(even if it is the same) else return nulll
@@ -543,16 +587,13 @@ class WindowManager {
     }
 
     arrange() {
-        //step1: find the focused window
-        //step2 : getAllTheWindowsOpened and sort them by size excluding the focused window(if there) which will be placed at the start
-        let windows = this.getVisibleWindowsOnCurrentMonitorByAlgo();
-        let monitor = this.getCurrentMonitor(); //will have x,y, width, height
-        //step3 : use the half algorithm  - find the monitor rectangle,remaining rect = monitor rectangle and place the ith windows at half or full of the remaining space depeding upon if there are more windows to display
+        let windows = this.getVisibleWindowsOnCurrentMonitorBySize();
+        let [x, y, width, height] = this.getUsableScreenArea(this.getCurrentMonitor())
         this.customArrange(windows, {
-            x: 0,
-            y: 0,
-            width: monitor.width,
-            height: monitor.height,
+            x: x,
+            y: y,
+            width: width,
+            height: height,
         });
     }
 
@@ -636,10 +677,26 @@ class WindowManager {
         }
     }
 
-    kill() {
-        let focusedWindow = this.getFocusedWindow()
-        focusedWindow.kill()
-    }
+    // kill() {
+    //     let focusedWindow = this.getFocusedWindow()
+    //     let metaWindow = focusedWindow.get_meta_window();
+    //     // metaWindow.kill()
+    //     let pid = metaWindow.get_pid()
+    //     let gid = metaWindow.get_gtk_application_id()
+    //     let id = metaWindow.get_id()
+    //     let hints = metaWindow.mutter_hints
+    //     let sandboxedAppId = metaWindow.get_sandboxed_app_id()
+    //     let stableSeq = metaWindow.get_stable_sequence()
+    //     let startupId = metaWindow.get_startup_id();
+    //     global.log("pid is ", pid)
+    //     global.log("id is", id)
+    //     global.log("gid is", gid)
+    //     global.log("sandboxed id is ", sandboxedAppId);
+    //     global.log("stableSeq is ", stableSeq)
+    //     global.log("startup id is ", startupId);
+    //     DEBUG.print("hints are ", hints)
+    //     return pid
+    // }
 
     halfMaximize() {
         let [originX, originY, width, height] = this.getUsableScreenArea(this.getCurrentMonitor());
@@ -657,7 +714,12 @@ class WindowManager {
     fullMaximize() {
         let focusedWindow = this.getFocusedWindow();
         let metaWindow = focusedWindow.get_meta_window();
-        metaWindow.maximize();
+        metaWindow.maximize(Meta.MaximizeFlags.BOTH);
+    }
+    unmaximize() {
+        let focusedWindow = this.getFocusedWindow();
+        let metaWindow = focusedWindow.get_meta_window();
+        metaWindow.unmaximize(Meta.MaximizeFlags.BOTH);
     }
     minimize() {
         let focusedWindow = this.getFocusedWindow();

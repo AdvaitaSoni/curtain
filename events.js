@@ -6,8 +6,8 @@ const Meta = imports.gi.Meta;
 const Tween = imports.ui.tweener;
 const Clutter = imports.gi.Clutter;
 const Cinnamon = imports.gi.Cinnamon;
-
-//------------------------- EVENTS
+const { Commands } = require("./commands")
+    //------------------------- EVENTS
 
 class EventManager {
     windowMgr;
@@ -140,10 +140,9 @@ class EventManager {
         this.windowMgr.halfMaximize()
     }
 
-    kill() {
-        this.windowMgr.kill()
+    unmaximize() {
+        this.windowMgr.unmaximize()
     }
-
     moveToWorkspace(index) {
         let getFocusedWindow = this.getFocusedWindow;
         let meta_window = getFocusedWindow.get_meta_window();

@@ -16,8 +16,9 @@
         "moveKeyBinding",
         "swapKeyBinding",
         "halfScreenBinding",
-        "minimizeBinding",
-        "fullScreenBinding"
+        "fullScreenBinding",
+        "unmaximizeBinding",
+        "minimizeBinding"
       ]
     },
     "animation-settings": {
@@ -34,27 +35,27 @@
   "arrangeKeyBinding": {
     "type": "keybinding",
     "description": "Arrange Windows Shortcut",
-    "default": "<Control>a"
+    "default": "<Super>Tab"
   },
   "focusKeyBinding": {
     "type": "keybinding",
     "description": "Focus Window Shortcut",
-    "default": "<Control>b"
+    "default": "<Super>f"
   },
   "moveKeyBinding": {
     "type": "keybinding",
     "description": "Move Window Shortcut",
-    "default": "<Control>c"
+    "default": "<Super>m"
   },
   "swapKeyBinding": {
     "type": "keybinding",
     "description": "Swap Window Shortcut",
-    "default": "<Control>d"
+    "default": "<Super>s"
   },
   "minimizeBinding": {
     "type": "keybinding",
     "description": "Minimize the focused window",
-    "default": "<Super><Shift>m"
+    "default": "<Super>p"
   },
   "halfScreenBinding": {
     "type": "keybinding",
@@ -64,7 +65,7 @@
   "fullScreenBinding": {
     "type": "keybinding",
     "description": "Maximize the focused window",
-    "default": "<Super>m"
+    "default": "<Super>l"
   },
   "animationsAllowed": {
     "type": "checkbox",
@@ -82,9 +83,14 @@
   "animationType": {
     "type": "combobox",
     "description": "Type",
-    "default": "Linear",
+    "default": "linear",
     "options": {
-      "linear": "linear"
+      "Linear": "linear"
     }
+  },
+  "unmaximizeBinding": {
+    "type": "keybinding",
+    "description": "Exit from the maximized window",
+    "default": "<Super>q"
   }
 }

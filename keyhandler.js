@@ -13,62 +13,63 @@ let eventMgr;
 // @add any new keyNames here
 const MAP = {
     arrangeKeyBinding: {
-        id: "key1",
+        id: "arrangKeyBinding",
         kind: "binding",
         event: () => {
             try {
-                global.log("hello from event1");
-                global.log("eventmgr is null", !eventMgr);
-                eventMgr.event1();
+                global.log("Event::arrangeKeyBinding");
+                eventMgr.arrange();
             } catch (e) {
-                global.log("error in event for key 1", e.message);
+                global.log("error in Event::arrangeKeyBinding", e.message);
+            }
+        },
+    },
+    focusKeyBinding: {
+        id: "focusKeyBinding",
+        kind: "binding",
+        event: () => {
+            try {
+                global.log("Event::focusKeyBinding");
+                eventMgr.focusToNextAlgorithmically();
+            } catch (e) {
+                global.log("error in Event::focusKeyBinding", e.message);
             }
             // eventMgr.eventResizeWindow();
         },
     },
-    focusKeyBinding: {
-        id: "key2",
-        kind: "binding",
-        event: () => {
-            global.log("hello from event2");
-            eventMgr.event2();
-        },
-    },
     swapKeyBinding: {
-        id: "key3",
+        id: "swapKeyBinding",
         kind: "binding",
         event: () => {
-            eventMgr.event3();
+            try {
+                global.log("Event::swapKeyBinding");
+                eventMgr.swapToNextAlgorithmically();
+            } catch (e) {
+                global.log("error in Event::swapKeyBinding", e.message);
+            }
+            // eventMgr.eventResizeWindow();
         },
     },
     moveKeyBinding: {
-        id: "key3",
+        id: "moveKeyBinding",
         kind: "binding",
-        event: () => {
-            eventMgr.event4();
-        },
-    },
-    minimizeBinding: {
-        id: "minimizeBinding",
-        kind: "binding",
-        // type: "keybinding",
         event: () => {
             try {
-                global.log("Event::minimize");
-                eventMgr.event1();
+                global.log("Event::moveKeyBinding");
+                eventMgr.moveInDirectionOfNextNode();
             } catch (e) {
-                global.log("error in Event::minimize", e.message);
+                global.log("error in Event::moveKeyBinding", e.message);
             }
+            // eventMgr.eventResizeWindow();
         },
     },
     halfScreenBinding: {
         id: "halfScreenBinding",
         kind: "binding",
-        // type: "keybinding",
         event: () => {
             try {
                 global.log("Event::halfScreen");
-                eventMgr.event1();
+                eventMgr.halfMaximize();
             } catch (e) {
                 global.log("error in Event::halfScreen", e.message);
             }
@@ -77,16 +78,41 @@ const MAP = {
     fullScreenBinding: {
         id: "fullScreenBinding",
         kind: "binding",
-        // type: "keybinding",
         event: () => {
             try {
                 global.log("Event::fullScreen");
-                eventMgr.event1();
+                eventMgr.fullMaximize();
             } catch (e) {
                 global.log("error in Event::fullScreen", e.message);
             }
         },
     },
+    unmaximizeBinding: {
+        id: "unmaximizeBinding",
+        kind: "binding",
+        event: () => {
+            try {
+                global.log("Event::unmaximizeBinding");
+                eventMgr.unmaximize();
+            } catch (e) {
+                global.log("error in Event::unmaximizeBinding", e.message);
+            }
+        },
+    },
+    minimizeBinding: {
+        id: "minimizeBinding",
+        kind: "binding",
+        event: () => {
+            try {
+                global.log("Event::minimizeBinding");
+                eventMgr.minimize();
+            } catch (e) {
+                global.log("error in Event::minimizeBinding", e.message);
+            }
+            // eventMgr.eventResizeWindow();
+        },
+    },
+    //todo: add a note for kill binding alt+f4
     animationsAllowed: {
         kind: "checkbox"
     },
@@ -96,6 +122,7 @@ const MAP = {
     animationType: {
         kind: "combobox"
     }
+
 };
 
 class KeyHandler {

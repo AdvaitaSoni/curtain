@@ -5,11 +5,16 @@ function print(str, object) {
     global.log(str, JSON.stringify(object));
 }
 
-function windowDEBUG(str, window) {
-    let windowDetails = {
-        type: window.get_window_type(),
-        id: window.get_gtk_application_id(),
-        description: window.description()
+function windowPrint(str, window) {
+    if (!window) {
+        global.log(str, null)
+        return;
     }
-    print(str, windowDetails)
+    let windowDetails = {
+        type: window.get_meta_window().get_window_type(),
+        appId: window.get_meta_window().get_gtk_application_id(),
+        id: window.get_meta_window().get_id(),
+        description: window.get_meta_window().get_description(),
+    };
+    global.log(str, JSON.stringify(windowDetails));
 }
