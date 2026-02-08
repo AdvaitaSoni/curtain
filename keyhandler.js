@@ -12,8 +12,9 @@ let eventMgr;
 
 // @add any new keyNames here
 const MAP = {
-    key1: {
+    arrangeKeyBinding: {
         id: "key1",
+        kind: "binding",
         event: () => {
             try {
                 global.log("hello from event1");
@@ -25,19 +26,76 @@ const MAP = {
             // eventMgr.eventResizeWindow();
         },
     },
-    key2: {
+    focusKeyBinding: {
         id: "key2",
+        kind: "binding",
         event: () => {
             global.log("hello from event2");
             eventMgr.event2();
         },
     },
-    key3: {
+    swapKeyBinding: {
         id: "key3",
+        kind: "binding",
         event: () => {
             eventMgr.event3();
         },
     },
+    moveKeyBinding: {
+        id: "key3",
+        kind: "binding",
+        event: () => {
+            eventMgr.event4();
+        },
+    },
+    minimizeBinding: {
+        id: "minimizeBinding",
+        kind: "binding",
+        // type: "keybinding",
+        event: () => {
+            try {
+                global.log("Event::minimize");
+                eventMgr.event1();
+            } catch (e) {
+                global.log("error in Event::minimize", e.message);
+            }
+        },
+    },
+    halfScreenBinding: {
+        id: "halfScreenBinding",
+        kind: "binding",
+        // type: "keybinding",
+        event: () => {
+            try {
+                global.log("Event::halfScreen");
+                eventMgr.event1();
+            } catch (e) {
+                global.log("error in Event::halfScreen", e.message);
+            }
+        },
+    },
+    fullScreenBinding: {
+        id: "fullScreenBinding",
+        kind: "binding",
+        // type: "keybinding",
+        event: () => {
+            try {
+                global.log("Event::fullScreen");
+                eventMgr.event1();
+            } catch (e) {
+                global.log("error in Event::fullScreen", e.message);
+            }
+        },
+    },
+    animationsAllowed: {
+        kind: "checkbox"
+    },
+    animationTime: {
+        kind: "slider"
+    },
+    animationType: {
+        kind: "combobox"
+    }
 };
 
 class KeyHandler {
@@ -80,8 +138,14 @@ class KeyHandler {
         if (
             this.settingsMap[key] &&
             this.keyMap[key] &&
-            this.settingsMap[key].length > 0
+            this.settingsMap[key].length > 0 &&
+            this.keyMap[key].kind == "binding"
         ) {
+            try {
+                this.destroyKey(key)
+            } catch (e) {
+                global.log('no prior key')
+            }
             Main.keybindingManager.addHotKey(
                 this.keyMap[key].id,
                 this.settingsMap[key],

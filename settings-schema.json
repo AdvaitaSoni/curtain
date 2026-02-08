@@ -1,21 +1,90 @@
 {
-  "section1": {
-    "type": "section",
-    "description": "key board bindings"
+  "layout": {
+    "type": "layout",
+    "pages": ["window-settings", "animation-settings"],
+    "window-settings": {
+      "type": "page",
+      "title": "Windows",
+      "sections": ["window-section"]
+    },
+    "window-section": {
+      "type": "section",
+      "title": "window arrangement",
+      "keys": [
+        "arrangeKeyBinding",
+        "focusKeyBinding",
+        "moveKeyBinding",
+        "swapKeyBinding",
+        "halfScreenBinding",
+        "minimizeBinding",
+        "fullScreenBinding"
+      ]
+    },
+    "animation-settings": {
+      "type": "page",
+      "title": "Animations",
+      "sections": ["animation-section"]
+    },
+    "animation-section": {
+      "type": "section",
+      "title": "Animation Settings",
+      "keys": ["animationsAllowed", "animationTime", "animationType"]
+    }
   },
-  "key1": {
+  "arrangeKeyBinding": {
     "type": "keybinding",
-    "default": "<Control>a",
-    "description": "trying if this is the windows key or not"
+    "description": "Arrange Windows Shortcut",
+    "default": "<Control>a"
   },
-  "key2": {
+  "focusKeyBinding": {
     "type": "keybinding",
-    "default": "<Control>a",
-    "description": "trying if this is the windows key or not"
+    "description": "Focus Window Shortcut",
+    "default": "<Control>b"
   },
-  "key3": {
+  "moveKeyBinding": {
     "type": "keybinding",
-    "default": "<Control>a",
-    "description": "trying if this is the windows key or not"
+    "description": "Move Window Shortcut",
+    "default": "<Control>c"
+  },
+  "swapKeyBinding": {
+    "type": "keybinding",
+    "description": "Swap Window Shortcut",
+    "default": "<Control>d"
+  },
+  "minimizeBinding": {
+    "type": "keybinding",
+    "description": "Minimize the focused window",
+    "default": "<Super><Shift>m"
+  },
+  "halfScreenBinding": {
+    "type": "keybinding",
+    "description": "Make the focused window occupy half size",
+    "default": "<Super>h"
+  },
+  "fullScreenBinding": {
+    "type": "keybinding",
+    "description": "Maximize the focused window",
+    "default": "<Super>m"
+  },
+  "animationsAllowed": {
+    "type": "checkbox",
+    "default": true,
+    "description": "Animations"
+  },
+  "animationTime": {
+    "type": "scale",
+    "default": 0.25,
+    "min": 0.01,
+    "max": 5,
+    "step": 0.01,
+    "description": "Duration"
+  },
+  "animationType": {
+    "type": "combobox",
+    "description": "Type",
+    "default": "Linear",
+    "options": {
+      "linear": "linear"
+    }
   }
 }
