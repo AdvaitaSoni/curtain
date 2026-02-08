@@ -181,3 +181,167 @@ class KeyHandler {
     eventMgr = null;
   }
 }
+
+//map value
+const MAP = {
+    arrangeKeyBinding: {
+        type: "keybinding",
+        id: "arrangeKeyBinding",
+        event: () => {
+            try {
+                global.log("Event::arrange");
+                // eventMgr.event1();
+            } catch (e) {
+                global.log("error in Event::arrange", e.message);
+            }
+        },
+    },
+    focusKeyBinding: {
+        id: "focusKeyBinding",
+        type: "keybinding",
+        event: () => {
+            try {
+                global.log("Event::focus");
+                // eventMgr.event1();
+            } catch (e) {
+                global.log("error in Event::focus", e.message);
+            }
+        },
+    },
+    moveKeyBinding: {
+        id: "moveKeyBinding",
+        type: "keybinding",
+        event: () => {
+            try {
+                global.log("Event::move");
+                eventMgr.event1();
+            } catch (e) {
+                global.log("error in Event::move", e.message);
+            }
+        },
+    },
+    swapKeyBinding: {
+        id: "swapKeyBinding",
+        type: "keybinding",
+        event: () => {
+            try {
+                global.log("Event::swap");
+                eventMgr.event1();
+            } catch (e) {
+                global.log("error in Event::swap", e.message);
+            }
+        },
+    },
+    minimizeBinding: {
+        id: "minimizeBinding",
+        type: "keybinding",
+        event: () => {
+            try {
+                global.log("Event::minimize");
+                eventMgr.event1();
+            } catch (e) {
+                global.log("error in Event::minimize", e.message);
+            }
+        },
+    },
+    halfScreenBinding: {
+        id: "halfScreenBinding",
+        type: "keybinding",
+        event: () => {
+            try {
+                global.log("Event::halfScreen");
+                eventMgr.event1();
+            } catch (e) {
+                global.log("error in Event::halfScreen", e.message);
+            }
+        },
+    },
+    fullScreenBinding: {
+        id: "fullScreenBinding",
+        type: "keybinding",
+        event: () => {
+            try {
+                global.log("Event::fullScreen");
+                eventMgr.event1();
+            } catch (e) {
+                global.log("error in Event::fullScreen", e.message);
+            }
+        },
+    },
+    animationsAllowed: {
+        type: "checkbox",
+        value: true,
+    },
+    animationTime: {
+        type: "scale",
+        value: 0.25,
+    },
+    animationType: {
+        type: "combobox",
+        value: "linear",
+    },
+};
+
+//settings schema
+,
+                "minimizeBinding",
+                "halfScreenBinding",
+                "fullScreenBinding"
+
+
+
+,
+    "minimizeBinding": {
+        "type": "keybinding",
+        "description": "Minimize the focused window",
+        "default": "<Super><Shift>m"
+    },
+    "halfScreenBinding": {
+        "type": "keybinding",
+        "description": "Make the focused window occupy half size",
+        "default": "<Super>h"
+    },
+    "fullScreenBinding": {
+        "type": "keybinding",
+        "description": "Maximize the focused window",
+        "default": "<Super>m"
+    },
+
+    ,
+        "animation-settings": {
+            "type": "page",
+            "title": "Animations",
+            "sections": ["animation-section"]
+        },
+        "animation-section": {
+            "type": "section",
+            "title": "Animation Settings",
+            "description": "Animations applied to closing,opening, arranging etc",
+            "keys": ["animationsAllowed", "animationTime", "animationType"]
+        }
+
+//animations part
+
+ "animationsAllowed": {
+        "type": "checkbox",
+        "default": "true",
+        "description": "Animations allowed"
+    },
+    "animationType": {
+        "type": "combobox",
+        "default": "linear",
+        "description": "Type of animation to apply",
+        "options": {
+            "Linear": "linear"
+        },
+        "dependency": "animationsAllowed"
+    },
+    "animationTime": {
+        "type": "scale",
+        "default": 0.25,
+        "min": 0.01,
+        "max": 5,
+        "step": 0.01,
+        "description": "Duration of animation",
+        "dependency": "animationsAllowed"
+    }

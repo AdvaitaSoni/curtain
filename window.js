@@ -634,4 +634,34 @@ class WindowManager {
             // this.focusNext() NO NEED AS FOCUS WILL ALWAYS BE ON THE ALREADY FOCUSED WINDOW
         }
     }
+
+    kill() {
+        let focusedWindow = this.getFocusedWindow()
+        focusedWindow.kill()
+    }
+
+    halfMaximize() {
+        let [originX, originY, width, height] = this.getUsableScreenArea(this.getCurrentMonitor());
+        let focusedWindow = this.getFocusedWindow();
+        let frame = focusedWindow.get_meta_window().get_frame_rect();
+        let midpoint = originX + width / 2;
+        let rec = {
+            x: Math.abs(frame.x - midpoint) >= Math.abs(frame.x - originX) ? midpoint : 0,
+            y: originY,
+            width: width,
+            height: height
+        }
+        this.transformWindowActorWithAnimation(focusedWindow, rec)
+    }
+    fullMaximize() {
+        let focusedWindow = this.getFocusedWindow();
+        let metaWindow = focusedWindow.get_meta_window();
+        metaWindow.maximize();
+    }
+    minimize() {
+        let focusedWindow = this.getFocusedWindow();
+        let metaWindow = focusedWindow.get_meta_window();
+        metaWindow.minimize();
+    }
+
 }

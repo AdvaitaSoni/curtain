@@ -10,8 +10,6 @@ const Cinnamon = imports.gi.Cinnamon;
 //------------------------- EVENTS
 
 class EventManager {
-    previous;
-    current;
     windowMgr;
 
     static inst;
@@ -24,7 +22,6 @@ class EventManager {
     }
 
     constructor() {
-        this.previous = this.current = null;
         this.windowMgr = WindowManager.instance;
     }
 
@@ -90,6 +87,7 @@ class EventManager {
         window.width = screenWidth;
         window.height = screenHeight;
     }
+
     event2() {
         global.log("this is event2");
         // this.signalManager.disconnectAllSignals();
@@ -104,10 +102,54 @@ class EventManager {
     event3() {
         global.log("this is event3");
     }
+
+    event4() {
+        global.log("this is event4");
+    }
+
     destroy() {
         this.windowMgr.destroy()
         this.windowMgr = null
     }
+
+    arrange() {
+        this.windowMgr.arrange()
+    }
+
+    focusToNextAlgorithmically() {
+        this.windowMgr.focusNext()
+    }
+
+    swapToNextAlgorithmically() {
+        this.windowMgr.swapNext()
+    }
+
+    moveInDirectionOfNextNode() {
+        this.windowMgr.moveNext()
+    }
+
+    minimize() {
+        this.windowMgr.minimize()
+    }
+
+    fullMaximize() {
+        this.windowMgr.fullMaximize()
+    }
+
+    halfMaximize() {
+        this.windowMgr.halfMaximize()
+    }
+
+    kill() {
+        this.windowMgr.kill()
+    }
+
+    moveToWorkspace(index) {
+        let getFocusedWindow = this.getFocusedWindow;
+        let meta_window = getFocusedWindow.get_meta_window();
+        meta_window.change_workspace_by_index(index, true);
+    }
+
 }
 
 //! TESTING CODE
