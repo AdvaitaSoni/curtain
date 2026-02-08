@@ -1,0 +1,183 @@
+//settings-schema
+{
+    "layout": {
+        "type": "layout",
+        "pages": [
+            "window-settings"
+        ],
+        "window-settings": {
+            "type": "page",
+            "title": "Windows",
+            "sections": ["window-section"]
+        },
+        "window-section": {
+            "type": "section",
+            "title": "window arrangement",
+            "keys": ["arrangeKeybinding", "focusKeybinding", "moveKeybinding", "swapKeybinding"]
+        }
+    },
+    "arrangeKeybinding": {
+        "type": "keybinding",
+        "description": "Arrange Windows Shortcut",
+        "default": "<Control>a"
+    },
+    "focusKeybinding": {
+        "type": "keybinding",
+        "description": "Focus Window Shortcut",
+        "default": "<Control>b"
+    },
+    "moveKeybinding": {
+        "type": "keybinding",
+        "description": "Move Window Shortcut",
+        "default": "<Control>c"
+    },
+    "swapKeybinding": {
+        "type": "keybinding",
+        "description": "Swap Window Shortcut",
+        "default": "<Control>d"
+    }
+}
+
+//key handler
+
+const Main = imports.ui.main;
+const GLib = imports.gi.GLib;
+const Settings = imports.ui.settings;
+const Events = require("./events");
+const DEBUG = require("./debugging");
+//----------------------- CONSTANTS
+const EVENT_GAP = 50;
+const UUID = "tileRice@AdvaitaSoni";
+
+//---------------------------GLOBAL OBJECTS
+let eventMgr;
+
+// @add any new keyNames here
+const MAP = {
+  arrangeKeybinding: {
+    id: "arrangeKeybinding",
+    event: () => {
+      try {
+        global.log("hello");
+        // global.log("this is ", this);
+        global.log("event::arrangeKeyBinding");
+      } catch (e) {
+        global.log("error in event", e.message);
+      }
+    },
+  },
+  focusKeybinding: {
+    id: "focusKeybinding",
+    event: () => {
+      try {
+        global.log("hello from focus event");
+      } catch (e) {
+        global.log("error in event", e.message);
+      }
+    },
+  },
+  moveKeybinding: {
+    id: "moveKeybinding",
+    event: () => {
+      global.log("hello from move event");
+      // eventMgr.event3();
+    },
+  },
+  swapKeybinding: {
+    id: "swapKeybinding",
+    event: () => {
+      global.log("hello from swap event");
+      // eventMgr.event4();
+    },
+  },
+};
+
+class KeyHandler {
+  keyMap;
+  // settingsMap;
+  // settings;
+  constructor() {
+    eventMgr = Events.EventManager.instance; //assign to global object
+    //loads the keyMap from settings
+    // this.arrangeKeybinding = null;
+    this.keyMap = MAP; //has keys to event mapping
+    // this.settingsMap = {};
+    for (const [key, _] of Object.entries(this.keyMap)) {
+      this[key] = null;
+      // global.log("key is ", key);
+    }
+
+    let settings = new Settings.ExtensionSettings(this, UUID);
+    global.log("settings is ", JSON.stringify(settings));
+    // for (const [key, _] of Object.entries(this.keyMap)) {
+    //     global.log("key is", key, typeof(key))
+    //     settings.bindProperty(
+    //         Settings.BindingDirection.IN,
+    //         key,
+    //         key,
+    //         () => this.updateKeybinding(key),
+    //         null,
+    //     );
+    // }
+    settings.bindProperty(
+      Settings.BindingDirection.IN,
+      "arrangeKeybinding",
+      "arrangeKeybinding",
+      () => {
+        (global.log("Executed #########"), null);
+      },
+    );
+    global.log("after bind property");
+    // this.updateAllKeyBindings();
+  }
+  // updateEvent(key, eventCallback) {
+  //     if (!this.keyMap[key]) {
+  //         DEBUG.print(
+  //             ` ${UUID} : FAILED TO UPDATE EVENT : Error in key map - value is `,
+  //             this.keyMap,
+  //         );
+  //         return;
+  //     }
+  //     this.keyMap[key].event = eventCallback;
+  //     this.updateKeybinding(key);
+  // }
+  updateKeybinding(key) {
+    if (this.keyMap[key] && this[key].length > 0) {
+      global.log(
+        "added key binding for key = ",
+        key,
+        " and value = ",
+        this[key],
+      );
+      Main.keybindingManager.addHotKey(this.keyMap[key].id, this[key], () => {
+        GLib.timeout_add(GLib.PRIORITY_DEFAULT, EVENT_GAP, () => {
+          global.log("will this work??");
+          this.keyMap[key].event();
+          return GLib.SOURCE_REMOVE;
+        });
+      });
+    }
+  }
+
+  // updateAllKeyBindings() {
+  //     for (const [key, _] of Object.entries(this.settingsMap)) {
+  //         this.updateKeybinding(key);
+  //     }
+  // }
+  destroyKey(key) {
+    if (!this.keyMap[key]) {
+      DEBUG.Print(
+        ` ${UUID} : FAILED TO DESTORY KEYHANLDER : Error in key map : KEY=${key} NOT FOUND!!! - value is `,
+        this.keyMap,
+      );
+    }
+    Main.keybindingManager.removeHotKey(this.keyMap[key].id);
+  }
+  destroy() {
+    for (const [key, _] of Object.entries(this.keyMap)) {
+      this.destroyKey(key);
+    }
+    eventMgr.destroy();
+    eventMgr = null;
+  }
+}
