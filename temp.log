@@ -345,3 +345,32 @@ const MAP = {
         "description": "Duration of animation",
         "dependency": "animationsAllowed"
     }
+
+info t=2026-02-11T05:52:11Z demands attention: false
+info t=2026-02-11T05:52:11Z effect: 
+info t=2026-02-11T05:52:11Z allows resize??: true
+info t=2026-02-11T05:52:11Z allows move??: true
+info t=2026-02-11T05:52:11Z can close??: true
+info t=2026-02-11T05:52:11Z can minimize??: true
+info t=2026-02-11T05:52:11Z can maximize??: true
+info t=2026-02-11T05:52:11Z is above??: false
+info t=2026-02-11T05:52:11Z is fullscreen??: false
+info t=2026-02-11T05:52:11Z is monitor sized??: false
+info t=2026-02-11T05:52:11Z is screen sized: false
+info t=2026-02-11T05:52:11Z resizeable: true
+info t=2026-02-11T05:52:11Z minimized: false
+info t=2026-02-11T05:52:11Z maximized horizontally: false
+info t=2026-02-11T05:52:11Z maximized vertically: false
+info t=2026-02-11T05:52:11Z fullscreen: false
+info t=2026-02-11T05:52:11Z demands attention is: false
+info t=2026-02-11T05:52:11Z frame type is : 0
+info t=2026-02-11T05:52:11Z transient for is : null
+info t=2026-02-11T05:52:11Z is skip taskbar is: false
+info t=2026-02-11T05:52:11Z tween res is : false
+info t=2026-02-11T05:52:11Z Opened window frame is  0 0 500 558
+info t=2026-02-11T05:52:11Z rect is : {
+    x: 960,
+    y: 0,
+    width: 960,
+    height: 1080,
+}
