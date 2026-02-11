@@ -345,6 +345,91 @@ const MAP = {
         "description": "Duration of animation",
         "dependency": "animationsAllowed"
     }
+//
+workspace-section : 
+"workspace-section": {
+            "type": "section",
+            "title": "Workspace arrangement",
+            "keys": ["moveSwitchWorkspace1Binding",
+                "moveSwitchWorkspace2Binding",
+                "moveSwitchWorkspace3Binding",
+                "moveSwitchWorkspace4Binding",
+                "moveSwitchWorkspace5Binding",
+                "moveSwitchWorkspace6Binding",
+                "moveNextWorkspaceBinding",
+                "movePrevWorkspaceBinding",
+                "switchWorkspace1Binding",
+                "switchWorkspace2Binding",
+                "switchWorkspace3Binding",
+                "switchWorkspace4Binding",
+                "switchWorkspace5Binding",
+                "switchWorkspace6Binding"
+            ]
+        },
+
+//add the end
+,
+    "moveSwitchWorkspace3Binding": {
+        "type": "keybinding",
+        "description": "move the focused window to workspace 3",
+        "default": "<Super><Shift>3"
+    },
+    "movesSwitchWorkspace4Binding": {
+        "type": "keybinding",
+        "description": "move the focused window to workspace 4",
+        "default": "<Super><Shift>4"
+    },
+    "moveSwitchWorkspace5Binding": {
+        "type": "keybinding",
+        "description": "move the focused window to workspace 5",
+        "default": "<Super><Shift>5"
+    },
+    "moveSwitchWorkspace6Binding": {
+        "type": "keybinding",
+        "description": "move the focused window to workspace 6",
+        "default": "<Super><Shift>6"
+    },
+    "moveNextWorkspaceBinding": {
+        "type": "keybinding",
+        "description": "Move the focused window to next workspace",
+        "default": "<Super>d"
+    },
+    "movePrevWorkspaceBinding": {
+        "type": "keybinding",
+        "description": "Move the focused window to previous workspace",
+        "default": "<Super>a"
+    },
+    "switchWorkspace1Binding": {
+        "type": "keybinding",
+        "description": "switch to workspace 1",
+        "default": "<Super>1"
+    },
+    "switchWorkspace2Binding": {
+        "type": "keybinding",
+        "description": "switch to workspace 2",
+        "default": "<Super>2"
+    },
+    "switchWorkspace3Binding": {
+        "type": "keybinding",
+        "description": "switch to workspace 3",
+        "default": "<Super>3"
+    },
+    "switchWorkspace4Binding": {
+        "type": "keybinding",
+        "description": "switch to workspace 4",
+        "default": "<Super>4"
+    },
+    "switchWorkspace5Binding": {
+        "type": "keybinding",
+        "description": "switch to workspace 5",
+        "default": "<Super>5"
+    },
+    "switchWorkspace6Binding": {
+        "type": "keybinding",
+        "description": "switch to workspace 6",
+        "default": "<Super>6"
+    }
+
 
 info t=2026-02-11T05:52:11Z demands attention: false
 info t=2026-02-11T05:52:11Z effect: 

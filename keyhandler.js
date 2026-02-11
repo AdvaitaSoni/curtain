@@ -109,9 +109,34 @@ const MAP = {
             } catch (e) {
                 global.log("error in Event::minimizeBinding", e.message);
             }
-            // eventMgr.eventResizeWindow();
         },
     },
+    moveSwitchWorkspace1Binding: {
+        id: "moveSwitchWorkspace1Binding",
+        kind: "binding",
+        event: () => {
+            try {
+                global.log("Event::moveSwitchWorkspace1Binding");
+                eventMgr.moveSwitchWorkspace1Binding()
+            } catch (e) {
+                global.log("error in Event::moveSwitchWorkspace1Binding", e.message);
+            }
+        },
+    },
+    moveSwitchWorkspace2Binding: {
+        id: "moveSwitchWorkspace2Binding",
+        kind: "binding",
+        event: () => {
+            try {
+                global.log("Event::moveSwitchWorkspace2Binding");
+                eventMgr.moveSwitchWorkspace2Binding()
+            } catch (e) {
+                global.log("error in Event::moveSwitchWorkspace2Binding", e.message);
+            }
+        },
+    },
+
+    //todo: add a note for switching to next workspace setting
     //todo: add a note for kill binding alt+f4
     animationsAllowed: {
         kind: "checkbox"

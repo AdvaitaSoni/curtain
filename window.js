@@ -39,9 +39,21 @@ class WindowManager {
             frame.y == rect.y &&
             frame.width == rect.width &&
             frame.height == rect.height
-        )
+        ) {
             return;
+        }
         metaWindow.unmaximize(Meta.MaximizeFlags.BOTH);
+        // try {
+        //     // global.log("window is maximized? ", metaWindow.is_maximized())
+        //     // global.log("window is maximized? ", metaWindow.is_fullscreen())
+        //     // global.log("window is monitor size?", metaWindow.is_monitor_sized())
+        //     global.log("horizontally maximized", metaWindow.maximimized_horizontally);
+        //     global.log("vertically maximized??", metaWindow.maximimized_vertically);
+        //     global.log("fullscreen??", metaWindow.fullscreen)
+        // } catch (e) {
+        //     global.log('error in maximize deciding ', e.message)
+        // }
+
         if (!animate) {
             ////!! sudden movement section
             metaWindow.move_resize_frame(
@@ -56,6 +68,7 @@ class WindowManager {
             //working if i use move_resize_frame in both update and onComplete
             //using it just on complete also works but change in size is too sudden
             //what if i apply tween on metawindow? won't work since i don't have any properties on metaWindow
+            global.log("adding tween", rect)
             Tween.addTween(actor, {
                 x: rect.x,
                 y: rect.y,
@@ -313,9 +326,25 @@ class WindowManager {
     }
 
     screenAppear(openedWindow) {
-        // this.arrange() //calling arrange once again
         let openedWindowActor = openedWindow.get_compositor_private()
         let windows = this.getVisibleWindowsOnCurrentMonitorBySize()
+        let [x, y, width, height] = this.getUsableScreenArea(this.getCurrentMonitor())
+        if (!(this.verifyLayout(windows, {
+                x,
+                y,
+                width,
+                height
+            }))) {
+            this.arrange()
+            return;
+        }
+        let windowDetails = {
+            type: windows[0].get_meta_window().get_window_type(),
+            appId: windows[0].get_meta_window().get_gtk_application_id(),
+            id: windows[0].get_meta_window().get_id(),
+            description: windows[0].get_meta_window().get_description(),
+        };
+        global.log("windows on screen appear are", windowDetails)
             //this makes sure that windows is not opened in full screen causing unneccessary modification to the  whole layout  
         openedWindow.begin_grab_op(Meta.GrabOp.KEYBOARD_RESIZING_UNKNOWN, true, global.get_current_time())
         global.display.end_grab_op(global.get_current_time());
@@ -581,6 +610,92 @@ class WindowManager {
         this.transformWindowActorWithAnimation(nextWindow, focusedRectProperties);
     }
 
+    verifyLayout(windowsArray, rect) {
+        //solve by recursion for now and 
+        let X = rect.x;
+        let Y = rect.y;
+        let widthLeft = rect.width
+        let heightLeft = rect.height
+        let answer = true
+        for (let i = 0; i < windowsArray.length; i++) {
+            let window = windowsArray[i];
+            let frame = window.get_meta_window().get_frame_rect();
+            //verify if windows is in one of the two locations
+            let rect1, rect2;
+            if (i == windowsArray.length - 1) {
+                rect1 = rect2 = {
+                    x: X,
+                    y: Y,
+                    width: widthLeft,
+                    height: heightLeft,
+                };
+                global.log("single case:")
+                global.log("frame is x", frame.x, frame.y, frame.width, frame.height)
+                global.log("rect1 is ", rect1, "rect2 is ", rect2)
+                if (frame.x != rect1.x || frame.y != rect1.y || frame.width != rect1.width || frame.height != rect1.height) {
+                    answer = false;
+                    break;
+                }
+            } else {
+                //occupy half space
+                if (heightLeft > widthLeft) {
+                    rect1 = {
+                        x: X,
+                        y: Y,
+                        width: widthLeft,
+                        height: heightLeft / 2,
+                    };
+                    rect2 = {
+                        x: X,
+                        y: Y + heightLeft / 2,
+                        width: widthLeft,
+                        height: heightLeft / 2
+                    }
+                    global.log("height case:")
+                    global.log("frame is x", frame.x, frame.y, frame.width, frame.height)
+                    global.log("rect1 is ", rect1, "rect2 is ", rect2)
+                    if (frame.x == rect1.x && frame.y == rect1.y && frame.width == rect1.width && frame.height == rect1.height) {
+                        Y += heightLeft / 2;
+                    } else if (frame.x == rect2.x && frame.y == rect2.y && frame.width == rect2.width && frame.height == rect2.height) {
+                        //Y remains the same
+                    } else {
+                        global.log("answer is ", answer)
+                        answer = false;
+                        break;
+                    }
+                    heightLeft = heightLeft / 2;
+                } else {
+                    rect1 = {
+                        x: X,
+                        y: Y,
+                        width: widthLeft / 2,
+                        height: heightLeft,
+                    };
+                    rect2 = {
+                        x: X + widthLeft / 2,
+                        y: Y,
+                        width: widthLeft / 2,
+                        height: heightLeft
+                    }
+                    global.log("width case:")
+                    global.log("frame is x", frame.x, frame.y, frame.width, frame.height)
+                    global.log("rect1 is ", rect1, "rect2 is ", rect2)
+                    if (frame.x == rect1.x && frame.y == rect1.y && frame.width == rect1.width && frame.height == rect1.height) {
+                        X += heightLeft / 2;
+                    } else if (frame.x == rect2.x && frame.y == rect2.y && frame.width == rect2.width && frame.height == rect2.height) {
+                        //X remains the same
+                    } else {
+                        answer = false;
+                        global.log("answer is ", answer)
+                        break;
+                    }
+                    widthLeft = widthLeft / 2;
+                }
+            }
+        }
+        return answer
+    }
+
     //if windows are 0 don't do anything else if windows are there start from the focused else the largest window
     customArrange(windowsArray, area, index = 0) {
         if (index >= windowsArray.length) return;
@@ -742,6 +857,26 @@ class WindowManager {
         let focusedWindow = this.getFocusedWindow();
         let metaWindow = focusedWindow.get_meta_window();
         metaWindow.minimize();
+    }
+
+    moveToWorkspace(index) {
+        try {
+            if (index < 1) return;
+            let focusedWindow = this.getFocusedWindow();
+            if (!focusedWindow) return
+            let meta_window = focusedWindow.get_meta_window();
+            meta_window.change_workspace_by_index(index - 1, true);
+            this.screenDisapper(meta_window)
+            this.switchWorkspace(index);
+            this.screenAppear(meta_window)
+        } catch (e) {
+            global.log("Error in moving window", e.message)
+        }
+    }
+    switchWorkspace(index) {
+        if (index < 1) return
+        let workspace = global.screen.get_workspace_by_index(index - 1)
+        workspace.activate(global.get_current_time());
     }
 
 }

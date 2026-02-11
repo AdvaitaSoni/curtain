@@ -143,10 +143,11 @@ class EventManager {
     unmaximize() {
         this.windowMgr.unmaximize()
     }
-    moveToWorkspace(index) {
-        let getFocusedWindow = this.getFocusedWindow;
-        let meta_window = getFocusedWindow.get_meta_window();
-        meta_window.change_workspace_by_index(index, true);
+    moveSwitchWorkspace1Binding() {
+        this.windowMgr.moveToWorkspace(1);
+    }
+    moveSwitchWorkspace2Binding() {
+        this.windowMgr.moveToWorkspace(2);
     }
 
 }
