@@ -328,16 +328,23 @@ class WindowManager {
     screenAppear(openedWindow) {
         let openedWindowActor = openedWindow.get_compositor_private()
         let windows = this.getVisibleWindowsOnCurrentMonitorBySize()
+        global.log("windows length is ", windows.length)
         let [x, y, width, height] = this.getUsableScreenArea(this.getCurrentMonitor())
-        if (!(this.verifyLayout(windows, {
+        try {
+            let isLayoutArranged = this.verifyLayout(windows.filter((win) => { return win != openedWindowActor }), {
                 x,
                 y,
                 width,
                 height
-            }))) {
-            this.arrange()
-            return;
+            })
+            if (!(isLayoutArranged)) {
+                // this.arrange(windows.filter((win) => { win != openedWindowActor }))
+                return //@just return if the layout is not made since user most probably isn't looking to use the extension
+            }
+        } catch (e) {
+            global.log("error in layout calculation", e.message)
         }
+
         let windowDetails = {
             type: windows[0].get_meta_window().get_window_type(),
             appId: windows[0].get_meta_window().get_gtk_application_id(),
@@ -617,6 +624,7 @@ class WindowManager {
         let widthLeft = rect.width
         let heightLeft = rect.height
         let answer = true
+        global.log("windowsArray length is ", windowsArray.length)
         for (let i = 0; i < windowsArray.length; i++) {
             let window = windowsArray[i];
             let frame = window.get_meta_window().get_frame_rect();
@@ -693,6 +701,7 @@ class WindowManager {
                 }
             }
         }
+        global.log("answer is ", answer)
         return answer
     }
 
@@ -740,8 +749,11 @@ class WindowManager {
         }
     }
 
-    arrange() {
-        let windows = this.getVisibleWindowsOnCurrentMonitorBySize();
+    arrange(windows = null) {
+        if (!windows) {
+            windows = this.getVisibleWindowsOnCurrentMonitorBySize()
+        }
+        global.log("windows for arrange is ", windows)
         let [x, y, width, height] = this.getUsableScreenArea(this.getCurrentMonitor())
         this.customArrange(windows, {
             x: x,
