@@ -179,7 +179,6 @@ class WindowManager {
 
     //@all signal handeling is done here
     connectAllSignals() {
-        //todo add checks here for windows
         this.signalManager.connect(
             global.window_manager,
             "minimize",
@@ -226,7 +225,7 @@ class WindowManager {
         this.screenAppear(window);
     }
 
-    //todo: on leaving the window, layout of window left is automatically done but on entering the window, layout of entered window adjusting automatically will depend on user
+
     onMinimize(_, actor) {
         let window = actor.get_meta_window();
         if (window.get_window_type() != 0) {
@@ -275,7 +274,7 @@ class WindowManager {
                 }
             }
         }
-        if (windowsToRepaint.length == 0) return -1; //todo handle gracefully
+        if (windowsToRepaint.length == 0) return -1;
 
         let metaWin1 = closedWindow;
         let metaWin2 = windowsToRepaint[0].get_meta_window();
@@ -306,7 +305,7 @@ class WindowManager {
                     width: Math.max(frame1.width, frame2.width),
                     height: frame1.height * 2,
                 };
-            } else return -1; //todo handle gracefully
+            } else return -1;
         } else if (frame1.x1 == frame2.x2 || frame1.x2 == frame2.x1) {
             //for sharing left and right edge + condn: both should have the same y1 and width
             if (frame1.y1 == frame2.y1 && frame1.width == frame2.width) {
@@ -316,7 +315,7 @@ class WindowManager {
                     width: frame1.width * 2,
                     height: Math.max(frame1.height, frame2.height),
                 };
-            } else return -1; //todo handle gracefully
+            } else return -1;
         }
         try {
             this.customArrange(windowsToRepaint, rect);
@@ -325,25 +324,27 @@ class WindowManager {
         }
     }
 
-    screenAppear(openedWindow) {
+    screenAppear(openedWindow, windows = null) {
         let openedWindowActor = openedWindow.get_compositor_private()
-        let windows = this.getVisibleWindowsOnCurrentMonitorBySize()
+        if (!windows) {
+            windows = this.getVisibleWindowsOnCurrentMonitorBySize()
+        }
         global.log("windows length is ", windows.length)
         let [x, y, width, height] = this.getUsableScreenArea(this.getCurrentMonitor())
-        try {
-            let isLayoutArranged = this.verifyLayout(windows.filter((win) => { return win != openedWindowActor }), {
-                x,
-                y,
-                width,
-                height
-            })
-            if (!(isLayoutArranged)) {
-                // this.arrange(windows.filter((win) => { win != openedWindowActor }))
-                return //@just return if the layout is not made since user most probably isn't looking to use the extension
-            }
-        } catch (e) {
-            global.log("error in layout calculation", e.message)
+            // try {
+        let isLayoutArranged = this.verifyLayout(windows.filter((win) => { return win != openedWindowActor }), {
+            x,
+            y,
+            width,
+            height
+        })
+        if (!(isLayoutArranged)) {
+            // this.arrange(windows.filter((win) => { win != openedWindowActor }))
+            return //@just return if the layout is not made since user most probably isn't looking to use the extension
         }
+        // } catch (e) {
+        //     global.log("error in layout calculation", e.message)
+        // }
 
         let windowDetails = {
             type: windows[0].get_meta_window().get_window_type(),
@@ -364,7 +365,7 @@ class WindowManager {
                 width,
                 height
             })
-            return //todo handle more gracefully
+            return
         }
         let windowToModify
         for (let i = windows.length - 1; i >= 0; i--) {
@@ -470,6 +471,39 @@ class WindowManager {
         return this.getVisibleWindowsOnMonitor(this.getCurrentMonitor());
     }
 
+    getVisibleWindowsOnWorkspaceAndMonitorBySize(workspaceIndex, monitor) {
+        global.log("workspace windows are", this.getAllWindowsOnWorkspace(workspaceIndex).length)
+        let windows = this.getAllWindowsOnWorkspace(workspaceIndex).filter((win) => {
+            // global.log("id is ", win.get_meta_window().get_gtk_application_id())
+            // global.log("is hidden?", !win.get_meta_window().is_hidden())
+            // global.log("is minimized? ", win.get_meta_window().minimized)
+            return (!win.get_meta_window().minimized && this.getMonitorForActor(win) == monitor)
+        })
+        return windows.sort((a, b) => {
+            let value = b.get_meta_window().get_frame_rect().area() -
+                a.get_meta_window().get_frame_rect().area()
+            if (value != 0) return value;
+            else {
+                let frameA = a.get_meta_window().get_frame_rect()
+                let frameB = b.get_meta_window().get_frame_rect();
+                let centerA = {
+                    x: frameA.x + (frameA.width / 2),
+                    y: frameA.y + (frameA.height / 2)
+                }
+                let centerB = {
+                    x: frameB.x + (frameB.width / 2),
+                    y: frameB.y + (frameB.height / 2)
+                }
+                if ((centerA.x < centerB.x) || (centerA.y < centerB.y)) {
+                    return -1
+                } else {
+                    return 1
+                }
+            }
+        })
+    }
+
+    //todo: eliminaate those here that are not being called and optimize each of them instead of calling the one before
     getVisibleWindowsOnMonitorBySize(monitor) {
         return this.getVisibleWindowsOnMonitor(monitor).sort(
             (a, b) => {
@@ -642,6 +676,7 @@ class WindowManager {
                 global.log("rect1 is ", rect1, "rect2 is ", rect2)
                 if (frame.x != rect1.x || frame.y != rect1.y || frame.width != rect1.width || frame.height != rect1.height) {
                     answer = false;
+                    global.log("answer is ", answer)
                     break;
                 }
             } else {
@@ -667,8 +702,8 @@ class WindowManager {
                     } else if (frame.x == rect2.x && frame.y == rect2.y && frame.width == rect2.width && frame.height == rect2.height) {
                         //Y remains the same
                     } else {
-                        global.log("answer is ", answer)
                         answer = false;
+                        global.log("answer is ", answer)
                         break;
                     }
                     heightLeft = heightLeft / 2;
@@ -689,7 +724,7 @@ class WindowManager {
                     global.log("frame is x", frame.x, frame.y, frame.width, frame.height)
                     global.log("rect1 is ", rect1, "rect2 is ", rect2)
                     if (frame.x == rect1.x && frame.y == rect1.y && frame.width == rect1.width && frame.height == rect1.height) {
-                        X += heightLeft / 2;
+                        X += widthLeft / 2;
                     } else if (frame.x == rect2.x && frame.y == rect2.y && frame.width == rect2.width && frame.height == rect2.height) {
                         //X remains the same
                     } else {
@@ -775,7 +810,6 @@ class WindowManager {
         //step 2: sort the windows on screen by and if there is only 1 return
         let windows = this.getVisibleWindowsOnCurrentMonitorBySize();
         if (windows.length == 1) {
-            //todo: decide to do something else in this case
             return;
         }
 
@@ -817,7 +851,6 @@ class WindowManager {
         };
         //step 4: move only if the vectory has x or y components entirely 0 (horizontal or vertical vectors would imply no change in layout) + some tolerance if needed
         //else arrange
-        //todo: add tolerance if time
         if (vector.x == 0 || vector.y == 0) {
             //step 5: move the focused window in direction to new coordinates
 
@@ -880,7 +913,9 @@ class WindowManager {
             meta_window.change_workspace_by_index(index - 1, true);
             this.screenDisapper(meta_window)
             this.switchWorkspace(index);
-            this.screenAppear(meta_window)
+            let targetWorkspaceWindows = this.getVisibleWindowsOnWorkspaceAndMonitorBySize(index - 1, this.getCurrentMonitor())
+            global.log("target workspace windows are ", targetWorkspaceWindows)
+            this.screenAppear(meta_window, targetWorkspaceWindows)
         } catch (e) {
             global.log("Error in moving window", e.message)
         }
