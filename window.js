@@ -222,6 +222,11 @@ class WindowManager {
         if (window.get_window_type() != 0) {
             return;
         }
+        // global.log("(*****getting mutter hints: ********", window._MUTTER_HINTS)
+        // /let client_rect = window.client_rect_to_frame_rect(window.get_frame_rect())
+        // let stage_rect = window.protocol_to_stage_rect(window.get_frame_rect())
+        // global.log("client rect to frame rect", client_rect.x, client_rect.y, client_rect.width, client_rect.height)
+        // global.log("client rect to frame rect", stage_rect.x, stage_rect.y, stage_rect.width, stage_rect.height)
         this.screenAppear(window);
     }
 
@@ -244,6 +249,11 @@ class WindowManager {
             return;
         }
         try {
+            // global.log("(*****getting mutter hints: ********", window._MUTTER_HINTS)
+            // let client_rect = window.client_rect_to_frame_rect(window.get_frame_rect())
+            // let stage_rect = window.protocol_to_stage_rect(window.get_frame_rect())
+            // global.log("client rect to frame rect", client_rect.x, client_rect.y, client_rect.width, client_rect.height)
+            // global.log("client rect to frame rect", stage_rect.x, stage_rect.y, stage_rect.width, stage_rect.height)
             this.screenAppear(window);
         } catch (e) {
             global.log("got an error on screen appear");
@@ -463,7 +473,7 @@ class WindowManager {
     //MONITOR WINDOWS THAT ARE VISIBLE ONLY(not minimized)
     getVisibleWindowsOnMonitor(monitor) {
         return this.getAllWindowsOnMonitor(monitor).filter((win) => {
-            return !win.get_meta_window().is_hidden();
+            return !win.get_meta_window().minimized;
         });
     }
 
