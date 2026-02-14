@@ -4,7 +4,7 @@
         "pages": [
             "window-settings",
             "workspace-settings",
-            "animation-settings"
+            "application-settings"
         ],
         "window-settings": {
             "type": "page",
@@ -15,6 +15,11 @@
             "type": "page",
             "title": "Workspace",
             "sections": ["workspace-section", "window-workspace-section"]
+        },
+        "application-settings": {
+            "type": "page",
+            "title": "Applications",
+            "sections": ["application-section"]
         },
         "window-section": {
             "type": "section",
@@ -65,15 +70,10 @@
                 "moveSwitchPrevWorkspaceBinding"
             ]
         },
-        "animation-settings": {
-            "type": "page",
-            "title": "Animations",
-            "sections": ["animation-section"]
-        },
-        "animation-section": {
+        "application-section": {
             "type": "section",
-            "title": "Animation Settings",
-            "keys": ["animationsAllowed", "animationTime", "animationType"]
+            "title": "Configure hotkeys for opening common applications\nYou can do this by going to : System Settings>Keyboard>Shortcuts>CustomShortcuts",
+            "keys": ["custom-shortcuts-button"]
         }
     },
     "arrangeKeyBinding": {
@@ -229,27 +229,11 @@
     "killBinding": {
         "type": "keybinding",
         "description": "close the focused window",
-        "default": "<Super>x"
+        "default": "<Super>k"
     },
-    "animationsAllowed": {
-        "type": "checkbox",
-        "default": true,
-        "description": "Animations"
-    },
-    "animationTime": {
-        "type": "scale",
-        "default": 0.25,
-        "min": 0.01,
-        "max": 5,
-        "step": 0.01,
-        "description": "Duration"
-    },
-    "animationType": {
-        "type": "combobox",
-        "description": "Type",
-        "default": "linear",
-        "options": {
-            "Linear": "linear"
-        }
+    "custom-shortcuts-button": {
+        "type": "button",
+        "description": "Open Keyboard Settings",
+        "callback": "custom_shortcuts"
     }
 }
