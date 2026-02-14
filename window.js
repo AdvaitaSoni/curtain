@@ -935,5 +935,12 @@ class WindowManager {
         let workspace = global.screen.get_workspace_by_index(index - 1)
         workspace.activate(global.get_current_time());
     }
+    closeWindow() {
+        let window = this.getFocusedWindow().get_meta_window();
+        // global.display.close(global.get_current_time())
+        if (window.can_close()) {
+            window.delete(global.get_current_time())
+        };
+    }
 
 }
