@@ -588,3 +588,114 @@ AND APPLICATIONS WHICH ONLY ALLOW DISCRETE RESIZING(FOR EX: IN TERMINAL THE WIND
     event4() {
         global.log("this is event4");
     }
+
+//in window.js
+const Clutter = imports.gi.Clutter;
+const Mainloop = imports.mainloop;
+const DEBUG = require("./debugging");
+  // try {
+        //     // global.log("window is maximized? ", metaWindow.is_maximized())
+        //     // global.log("window is maximized? ", metaWindow.is_fullscreen())
+        //     // global.log("window is monitor size?", metaWindow.is_monitor_sized())
+        //     global.log("horizontally maximized", metaWindow.maximimized_horizontally);
+        //     global.log("vertically maximized??", metaWindow.maximimized_vertically);
+        //     global.log("fullscreen??", metaWindow.fullscreen)
+        // } catch (e) {
+        //     global.log('error in maximize deciding ', e.message)
+        // }
+
+// global.log("(*****getting mutter hints: ********", window._MUTTER_HINTS)
+        // /let client_rect = window.client_rect_to_frame_rect(window.get_frame_rect())
+        // let stage_rect = window.protocol_to_stage_rect(window.get_frame_rect())
+        // global.log("client rect to frame rect", client_rect.x, client_rect.y, client_rect.width, client_rect.height)
+        // global.log("client rect to frame rect", stage_rect.x, stage_rect.y, stage_rect.width, stage_rect.height)
+
+// global.log("(*****getting mutter hints: ********", window._MUTTER_HINTS)
+                // let client_rect = window.client_rect_to_frame_rect(window.get_frame_rect())
+                // let stage_rect = window.protocol_to_stage_rect(window.get_frame_rect())
+                // global.log("client rect to frame rect", client_rect.x, client_rect.y, client_rect.width, client_rect.height)
+                // global.log("client rect to frame rect", stage_rect.x, stage_rect.y, stage_rect.width, stage_rect.height)
+
+// global.log("id is ", win.get_meta_window().get_gtk_application_id())
+            // global.log("is hidden?", !win.get_meta_window().is_hidden())
+            // global.log("is minimized? ", win.get_meta_window().minimized)
+
+IN EVENTS.JS
+
+//! TESTING CODE
+/*
+let answer = Main.getWindowActorsForWorkspace();
+global.get_window_actors()
+workspace.activate(global.get_current_time());
+ monitorIndex = Main.layoutManager.findMonitorIndexAt(++x, ++y);
+let windowActor = this._window.get_compositor_private(); and caln call .get_first_child(),.height,.width
+monitor = Main.layoutManager.findMonitorForActor() //doesn't work for windows
+ global.bottom_window_group.hide(); and .show()
+ Main.layoutManager.monitors[i];
+ NUMBEROFMONITORS = global.display.get_n_monitors();
+
+let tracker = Cinnamon.WindowTracker.get_default();
+    let windowApp = tracker.get_window_app(this._window);
+    if (windowApp) {
+        name = windowApp.get_name();
+    }
+    else {
+        name = this._window.get_title();
+    }
+let keyFocus = global.stage.key_focus;
+window.check_alive(global.display.get_current_time_roundtrip())
+
+function hasMouseWindow(){
+    let window = global.display.get_pointer_window(null);
+    return window && window.window_type !== Meta.WindowType.DESKTOP;
+}
+
+function(source, actor, x, y, time) {
+            if (source.metaWindow) {
+             Main.moveWindowToNewWorkspace(source.metaWindow);
+            }
+}
+global.window_group.show();
+
+
+let xinerama_index = global.display.logical_index_to_xinerama_index(current.index);
+let logical_index = global.display.xinerama_index_to_logical_index(index);
+let rect = global.workspace_manager.get_active_workspace().get_work_area_for_monitor(logical_index);
+if (Main.monitorLabeler != null) { //SEE MORE
+            Main.monitorLabeler.show(monitor_info[0], invocation.get_sender());
+        }
+
+global.log("global background actor is ", global.background_actor);
+if (!actorData.visibleInFullscreen && monitor && monitor.inFullscreen)
+
+global.window_manager.disconnect(this.switchWorkspaceNotifyId);
+global.window_manager.connect('switch-workspace', Lang.bind(this, this.activeWorkspaceChanged));
+
+
+function isPopupMetaWindow(actor) {
+    switch(actor.meta_window.get_window_type()) {
+    case Meta.WindowType.DROPDOWN_MENU:
+    case Meta.WindowType.POPUP_MENU:
+    case Meta.WindowType.COMBO:
+        return true;
+    default:
+        return false;
+    }
+}
+*/
+
+//! TESTING ENDS
+
+//@expo-thumbnail for more details
+
+//** REQUIREMENTS
+//**1. GIVEN A MONITOR HOW CAN I FIND ALL THE WINDOWS IN IT
+//** */
+
+/*
+
+rough
+
+
+
+*/

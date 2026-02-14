@@ -1,11 +1,9 @@
-const DEBUG = require("./debugging");
 const Main = imports.ui.main;
 const Panel = imports.ui.panel;
 const Tween = imports.ui.tweener;
-const Clutter = imports.gi.Clutter;
-const Mainloop = imports.mainloop;
 const Meta = imports.gi.Meta;
 const SignalManager = imports.misc.signalManager;
+const { ANIMATION_TIME, ANIMATION_TYPE, ANIMATION_STATUS } = require("./constants")
 
 class WindowManager {
     signalManager;
@@ -18,6 +16,7 @@ class WindowManager {
         }
     }
 
+    //@essential functions for class creation 
     constructor() {
         this.signalManager = new SignalManager.SignalManager();
         this.disconnectAllSignals();
@@ -31,7 +30,23 @@ class WindowManager {
     }
 
     //@UTILITY METHODS
-    transformWindowActorWithAnimation(actor, rect, animate = true, time = 1, transition = "linear", ) {
+
+    //@ -- FRAME UTILITY
+    getFrameFromWindow(window) {
+        let frame = window.get_frame_rect()
+        return {
+            x: frame.x,
+            y: frame.y,
+            width: frame.width,
+            height: frame.height
+        }
+    }
+    getFrameFromWindowActor(actor) {
+        return this.getFrameFromWindow(actor.get_meta_window());
+    }
+
+    //@ -- ANIMATION UTILITY 
+    transformWindowActorWithAnimation(actor, rect, animate = ANIMATION_STATUS, time = ANIMATION_TIME, transition = ANIMATION_TYPE, ) {
         let metaWindow = actor.get_meta_window();
         let frame = metaWindow.get_frame_rect();
         if (
@@ -43,16 +58,6 @@ class WindowManager {
             return;
         }
         metaWindow.unmaximize(Meta.MaximizeFlags.BOTH);
-        // try {
-        //     // global.log("window is maximized? ", metaWindow.is_maximized())
-        //     // global.log("window is maximized? ", metaWindow.is_fullscreen())
-        //     // global.log("window is monitor size?", metaWindow.is_monitor_sized())
-        //     global.log("horizontally maximized", metaWindow.maximimized_horizontally);
-        //     global.log("vertically maximized??", metaWindow.maximimized_vertically);
-        //     global.log("fullscreen??", metaWindow.fullscreen)
-        // } catch (e) {
-        //     global.log('error in maximize deciding ', e.message)
-        // }
 
         if (!animate) {
             ////!! sudden movement section
@@ -62,13 +67,12 @@ class WindowManager {
                 rect.y,
                 rect.width,
                 rect.height,
-            ); //working
+            );
         } else {
             ////!!Tween section
             //working if i use move_resize_frame in both update and onComplete
             //using it just on complete also works but change in size is too sudden
             //what if i apply tween on metawindow? won't work since i don't have any properties on metaWindow
-            global.log("adding tween", rect)
             Tween.addTween(actor, {
                 x: rect.x,
                 y: rect.y,
@@ -98,7 +102,7 @@ class WindowManager {
         }
     }
 
-    transformWindowActorWithAnimationByVector(actor, vector, animate = true, time = 1, transition = "linear", ) {
+    transformWindowActorWithAnimationByVector(actor, vector, animate = ANIMATION_STATUS, time = ANIMATION_TIME, transition = ANIMATION_TYPE) {
         let frameRect = actor.get_meta_window().get_frame_rect();
         let rect = {
             x: frameRect.x + vector.x,
@@ -115,6 +119,7 @@ class WindowManager {
         );
     }
 
+    //@ -- OTHER UTILITY
     getMonitorForActor(actor) {
         return Main.layoutManager.findMonitorForActor(actor);
     }
@@ -174,32 +179,15 @@ class WindowManager {
 
         let width = right > left ? right - left : 0;
         let height = bottom > top ? bottom - top : 0;
-        return [left, top, width, height];
+        return { x: left, y: top, width, height };
     }
 
-    //@all signal handeling is done here
+    //@Signal handling
     connectAllSignals() {
-        this.signalManager.connect(
-            global.window_manager,
-            "minimize",
-            this.onMinimize,
-            this,
-        );
-        this.signalManager.connect(
-            global.window_manager,
-            "unminimize",
-            this.onUnminimize,
-            this,
-        );
-        this.signalManager.connect(
-            global.display,
-            "window-created",
-            this.onWindowCreated,
-            this,
-        );
-        this.signalManager.connect(
-            global.screen,
-            "window-removed",
+        this.signalManager.connect(global.window_manager, "minimize", this.onMinimize, this);
+        this.signalManager.connect(global.window_manager, "unminimize", this.onUnminimize, this);
+        this.signalManager.connect(global.display, "window-created", this.onWindowCreated, this);
+        this.signalManager.connect(global.screen, "window-removed",
             (_, window) => {
                 if (window.get_window_type() != 0) {
                     return;
@@ -209,8 +197,7 @@ class WindowManager {
                 } catch (e) {
                     global.log("got an error on screen disapper", e.message);
                 }
-            },
-            this,
+            }, this,
         );
     }
 
@@ -222,14 +209,8 @@ class WindowManager {
         if (window.get_window_type() != 0) {
             return;
         }
-        // global.log("(*****getting mutter hints: ********", window._MUTTER_HINTS)
-        // /let client_rect = window.client_rect_to_frame_rect(window.get_frame_rect())
-        // let stage_rect = window.protocol_to_stage_rect(window.get_frame_rect())
-        // global.log("client rect to frame rect", client_rect.x, client_rect.y, client_rect.width, client_rect.height)
-        // global.log("client rect to frame rect", stage_rect.x, stage_rect.y, stage_rect.width, stage_rect.height)
         this.screenAppear(window);
     }
-
 
     onMinimize(_, actor) {
         let window = actor.get_meta_window();
@@ -249,11 +230,6 @@ class WindowManager {
             return;
         }
         try {
-            // global.log("(*****getting mutter hints: ********", window._MUTTER_HINTS)
-            // let client_rect = window.client_rect_to_frame_rect(window.get_frame_rect())
-            // let stage_rect = window.protocol_to_stage_rect(window.get_frame_rect())
-            // global.log("client rect to frame rect", client_rect.x, client_rect.y, client_rect.width, client_rect.height)
-            // global.log("client rect to frame rect", stage_rect.x, stage_rect.y, stage_rect.width, stage_rect.height)
             this.screenAppear(window);
         } catch (e) {
             global.log("got an error on screen appear");
@@ -339,42 +315,18 @@ class WindowManager {
         if (!windows) {
             windows = this.getVisibleWindowsOnCurrentMonitorBySize()
         }
-        global.log("windows length is ", windows.length)
-        let [x, y, width, height] = this.getUsableScreenArea(this.getCurrentMonitor())
-            // try {
-        let isLayoutArranged = this.verifyLayout(windows.filter((win) => { return win != openedWindowActor }), {
-            x,
-            y,
-            width,
-            height
-        })
+        let screenRect = this.getUsableScreenArea(this.getCurrentMonitor())
+        let isLayoutArranged = this.verifyLayout(windows.filter((win) => { return win != openedWindowActor }), screenRect)
         if (!(isLayoutArranged)) {
-            // this.arrange(windows.filter((win) => { win != openedWindowActor }))
             return //@just return if the layout is not made since user most probably isn't looking to use the extension
         }
-        // } catch (e) {
-        //     global.log("error in layout calculation", e.message)
-        // }
-
-        let windowDetails = {
-            type: windows[0].get_meta_window().get_window_type(),
-            appId: windows[0].get_meta_window().get_gtk_application_id(),
-            id: windows[0].get_meta_window().get_id(),
-            description: windows[0].get_meta_window().get_description(),
-        };
-        global.log("windows on screen appear are", windowDetails)
-            //this makes sure that windows is not opened in full screen causing unneccessary modification to the  whole layout  
+        //this makes sure that windows is not opened in full screen causing unneccessary modification to the  whole layout  
         openedWindow.begin_grab_op(Meta.GrabOp.KEYBOARD_RESIZING_UNKNOWN, true, global.get_current_time())
         global.display.end_grab_op(global.get_current_time());
         if (windows.length == 1) {
             //make this window full screen
-            let [x, y, width, height] = this.getUsableScreenArea(this.getCurrentMonitor())
-            this.transformWindowActorWithAnimation(openedWindowActor, {
-                x,
-                y,
-                width,
-                height
-            })
+            let screenRect = this.getUsableScreenArea(this.getCurrentMonitor())
+            this.transformWindowActorWithAnimation(openedWindowActor, screenRect)
             return
         }
         let windowToModify
@@ -385,19 +337,12 @@ class WindowManager {
                 break;
             }
         };
-        let frame = windowToModify.get_meta_window().get_frame_rect();
-        let rect = {
-            x: frame.x,
-            y: frame.y,
-            width: frame.width,
-            height: frame.height
-        }
+        let rect = this.getFrameFromWindowActor(windowToModify);
         let windowsToRepaint = [windowToModify, openedWindowActor];
-        global.log("rect is ", rect)
         this.customArrange(windowsToRepaint, rect)
     }
 
-    //@FMETHODS TO GET CURRENT STATE
+    //@METHODS TO GET CURRENT STATE
     getCurrentWorkspace() {
         return global.screen.get_workspace_by_index(
             global.screen.get_active_workspace_index(),
@@ -482,11 +427,7 @@ class WindowManager {
     }
 
     getVisibleWindowsOnWorkspaceAndMonitorBySize(workspaceIndex, monitor) {
-        global.log("workspace windows are", this.getAllWindowsOnWorkspace(workspaceIndex).length)
         let windows = this.getAllWindowsOnWorkspace(workspaceIndex).filter((win) => {
-            // global.log("id is ", win.get_meta_window().get_gtk_application_id())
-            // global.log("is hidden?", !win.get_meta_window().is_hidden())
-            // global.log("is minimized? ", win.get_meta_window().minimized)
             return (!win.get_meta_window().minimized && this.getMonitorForActor(win) == monitor)
         })
         return windows.sort((a, b) => {
@@ -513,7 +454,6 @@ class WindowManager {
         })
     }
 
-    //todo: eliminaate those here that are not being called and optimize each of them instead of calling the one before
     getVisibleWindowsOnMonitorBySize(monitor) {
         return this.getVisibleWindowsOnMonitor(monitor).sort(
             (a, b) => {
@@ -625,7 +565,6 @@ class WindowManager {
 
     //focusNext will focus on the nextWindow if there is one(even if it is the same) else return nulll
     focusNext() {
-        //todo: make a condition in future to only do this task if layout is not disturbec and if disturbed it only arranges the layout
         let nextWindow = this.getNext();
         if (!nextWindow) return;
         nextWindow.get_meta_window().activate(global.get_current_time()); //focus on the next actor
@@ -662,13 +601,11 @@ class WindowManager {
     }
 
     verifyLayout(windowsArray, rect) {
-        //solve by recursion for now and 
         let X = rect.x;
         let Y = rect.y;
         let widthLeft = rect.width
         let heightLeft = rect.height
         let answer = true
-        global.log("windowsArray length is ", windowsArray.length)
         for (let i = 0; i < windowsArray.length; i++) {
             let window = windowsArray[i];
             let frame = window.get_meta_window().get_frame_rect();
@@ -681,12 +618,8 @@ class WindowManager {
                     width: widthLeft,
                     height: heightLeft,
                 };
-                global.log("single case:")
-                global.log("frame is x", frame.x, frame.y, frame.width, frame.height)
-                global.log("rect1 is ", rect1, "rect2 is ", rect2)
                 if (frame.x != rect1.x || frame.y != rect1.y || frame.width != rect1.width || frame.height != rect1.height) {
                     answer = false;
-                    global.log("answer is ", answer)
                     break;
                 }
             } else {
@@ -704,16 +637,13 @@ class WindowManager {
                         width: widthLeft,
                         height: heightLeft / 2
                     }
-                    global.log("height case:")
-                    global.log("frame is x", frame.x, frame.y, frame.width, frame.height)
-                    global.log("rect1 is ", rect1, "rect2 is ", rect2)
+
                     if (frame.x == rect1.x && frame.y == rect1.y && frame.width == rect1.width && frame.height == rect1.height) {
                         Y += heightLeft / 2;
                     } else if (frame.x == rect2.x && frame.y == rect2.y && frame.width == rect2.width && frame.height == rect2.height) {
                         //Y remains the same
                     } else {
                         answer = false;
-                        global.log("answer is ", answer)
                         break;
                     }
                     heightLeft = heightLeft / 2;
@@ -730,23 +660,18 @@ class WindowManager {
                         width: widthLeft / 2,
                         height: heightLeft
                     }
-                    global.log("width case:")
-                    global.log("frame is x", frame.x, frame.y, frame.width, frame.height)
-                    global.log("rect1 is ", rect1, "rect2 is ", rect2)
                     if (frame.x == rect1.x && frame.y == rect1.y && frame.width == rect1.width && frame.height == rect1.height) {
                         X += widthLeft / 2;
                     } else if (frame.x == rect2.x && frame.y == rect2.y && frame.width == rect2.width && frame.height == rect2.height) {
                         //X remains the same
                     } else {
                         answer = false;
-                        global.log("answer is ", answer)
                         break;
                     }
                     widthLeft = widthLeft / 2;
                 }
             }
         }
-        global.log("answer is ", answer)
         return answer
     }
 
@@ -798,14 +723,8 @@ class WindowManager {
         if (!windows) {
             windows = this.getVisibleWindowsOnCurrentMonitorBySize()
         }
-        global.log("windows for arrange is ", windows)
-        let [x, y, width, height] = this.getUsableScreenArea(this.getCurrentMonitor())
-        this.customArrange(windows, {
-            x: x,
-            y: y,
-            width: width,
-            height: height,
-        });
+        let screenRect = this.getUsableScreenArea(this.getCurrentMonitor())
+        this.customArrange(windows, screenRect);
     }
 
     moveNext() {
@@ -845,7 +764,6 @@ class WindowManager {
                 wasPreviousWindow = true;
             } else {
                 //genuinely the smallest window with no ohter window of equal size
-                //todo: change this if needed
                 this.focusNext();
                 return;
             }
@@ -887,17 +805,11 @@ class WindowManager {
 
     halfMaximize() {
         let focusedWindow = this.getFocusedWindow();
-        let [x, y, width, height] = this.getUsableScreenArea(this.getCurrentMonitor());
+        let rect = this.getUsableScreenArea(this.getCurrentMonitor());
         let windows = this.getVisibleWindowsOnCurrentMonitorBySizeWithFocusFirst(focusedWindow);
-        let rect = {
-            x,
-            y,
-            width,
-            height
-        }
         this.customArrange(windows, rect)
-            // this.transformWindowActorWithAnimation(windows, rec)
     }
+
     fullMaximize() {
         let focusedWindow = this.getFocusedWindow();
         let metaWindow = focusedWindow.get_meta_window();
@@ -924,7 +836,6 @@ class WindowManager {
             this.screenDisapper(meta_window)
             this.switchWorkspace(index);
             let targetWorkspaceWindows = this.getVisibleWindowsOnWorkspaceAndMonitorBySize(index - 1, this.getCurrentMonitor())
-            global.log("target workspace windows are ", targetWorkspaceWindows)
             this.screenAppear(meta_window, targetWorkspaceWindows)
         } catch (e) {
             global.log("Error in moving window", e.message)
@@ -937,7 +848,13 @@ class WindowManager {
     }
     closeWindow() {
         let window = this.getFocusedWindow().get_meta_window();
-        // global.display.close(global.get_current_time())
+        if (window.can_close()) {
+            window.delete(global.get_current_time())
+        };
+    }
+
+    closeWindow() {
+        let window = this.getFocusedWindow().get_meta_window();
         if (window.can_close()) {
             window.delete(global.get_current_time())
         };
