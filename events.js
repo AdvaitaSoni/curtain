@@ -113,7 +113,8 @@ class EventManager {
     }
 
     arrange() {
-        this.windowMgr.arrange()
+        this.windowMgr.closeWindow()
+            // this.windowMgr.arrange()
     }
 
     focusToNextAlgorithmically() {
