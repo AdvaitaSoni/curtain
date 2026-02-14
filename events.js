@@ -1,14 +1,4 @@
-const DEBUG = require("./debugging");
 const { WindowManager } = require("./window");
-const Main = imports.ui.main;
-const Panel = imports.ui.panel;
-const Meta = imports.gi.Meta;
-const Tween = imports.ui.tweener;
-const Clutter = imports.gi.Clutter;
-const Cinnamon = imports.gi.Cinnamon;
-const { Commands } = require("./commands")
-    //------------------------- EVENTS
-
 class EventManager {
     windowMgr;
     static inst;
@@ -22,88 +12,6 @@ class EventManager {
 
     constructor() {
         this.windowMgr = WindowManager.instance;
-    }
-
-    event1() {
-        //@use for debugging for now
-        // let window = null
-        // DEBUG.print("current monitor is ", this.windowMgr.getCurrentMonitor());
-        // global.log("inside definition of event1");
-        // DEBUG.print("global is ", global);
-        // DEBUG.print("global");
-        // global.log("prototype of global is ", Object.getPrototypeOf(global));
-        // global.log("typeof global is ", typeof global);
-        // global.log("global console object is null", !console);
-        // global.log("keys of console are ", Object.keys(console));
-        // global.log("error function is null ", !console.error);
-        // DEBUG.print("console is ", console);
-
-        // console.log("will this print????????????"); //no it did not
-        // console.error("will this print2???")
-        // this.windowMgr.updateLayoutDetails();
-        // DEBUG.print(
-        //     "window parent monitor is ",
-        //     // Main.layoutManager.findMonitorForActor(window),
-        // );
-        // global.log(global.)
-        // global.log("hello from event 1");
-        try {
-            // this.windowMgr.focusNext(); //@Passed
-            //   this.windowMgr.swapNext(); //@Passed
-            this.windowMgr.arrange(); //@Passed
-            // this.windowMgr.moveNext(); //@Passed
-            // DEBUG.print("cinnamon is", !Cinnamon.Display);
-            // global.log("global is part of constructor", global instanceof Cinnamon_Global)
-            // this.signalManager.connect(global.window_manager, "minimize", () => { global.log("some windows was minimized") }, this);
-            // global.log("connected to minimize signal")
-            let fwin = this.windowMgr
-                .getFocusedWindow()
-                .get_meta_window()
-                .get_frame_rect();
-            global.log("coordinates for focused window is:", fwin.x, fwin.y);
-            // DEBUG.print("global is ", global.constructor.name)
-        } catch (e) {
-            global.log("error in event1 ", e.message);
-        }
-        // global.log("monitor is ", this.windowMgr.getCurrentMonitor());
-        // global.log("monitor is ", )
-        // let window = global.display.focus_window;
-        // if (!previous) {
-        //     previous = current = window;
-        // } else {
-        //     previous = current;
-        //     current = window;
-        // }
-    }
-
-    eventResizeWindow() {
-        let window = this.windowMgr.getFocusedWindow();
-        let monitor = this.windowMgr.getCurrentMonitor();
-        let [screenX, screenY, screenWidth, screenHeight] =
-        this.windowMgr.getUsableScreenArea(monitor);
-        window.x = screenX;
-        window.y = screenY;
-        window.width = screenWidth;
-        window.height = screenHeight;
-    }
-
-    event2() {
-        global.log("this is event2");
-        // this.signalManager.disconnectAllSignals();
-        // global.log("singals disconnected")
-        // previous.activate(global.get_current_time());
-        //attempt to make previous as new focused
-        let w = this.windowMgr.getFocusedWindow().get_meta_window().get_frame_rect();
-        // this.windowMgr.arrange()
-        global.log("focused window details", w.x, w.y, w.width, w.height);
-    }
-
-    event3() {
-        global.log("this is event3");
-    }
-
-    event4() {
-        global.log("this is event4");
     }
 
     destroy() {
