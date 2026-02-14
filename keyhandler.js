@@ -1,7 +1,6 @@
 const Main = imports.ui.main;
 const GLib = imports.gi.GLib;
 const Settings = imports.ui.settings;
-const DEBUG = require("./debugging");
 const { MAP, setEventMgr, destroyEventMgr } = require("./keyMap")
 const { EVENT_GAP, UUID } = require("./constants") //Constants
 

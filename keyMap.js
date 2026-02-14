@@ -383,15 +383,5 @@ const MAP = {
                 global.log("error in Event::killBinding", e.message);
             }
         },
-    },
-    animationsAllowed: {
-        kind: "checkbox"
-    },
-    animationTime: {
-        kind: "slider"
-    },
-    animationType: {
-        kind: "combobox"
     }
-
 };
