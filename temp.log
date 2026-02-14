@@ -459,3 +459,25 @@ info t=2026-02-11T05:52:11Z rect is : {
     width: 960,
     height: 1080,
 }
+
+windowActor: paint_to_content
+windowCOnfig
+window: configure signal
+display: get_compositor
+meta backend: 
+clutter stage:
+let window = this.windowMgr.getFocusedWindow().get_meta_window();
+        let client_rect = window.frame_rect_to_client_rect(window.get_frame_rect())
+        let buffer_rect = window.get_buffer_rect()
+        let frame_rect = window.get_frame_rect();
+        let bounds = window.get_frame_bounds()
+        let override = window.is_override_redirect()
+            // let content_rect = window.get_client_content_rect()
+            // let hints = window.get_size_hints();
+        global.log("frame rect is ", frame_rect.x, frame_rect.y, frame_rect.width, frame_rect.height)
+        global.log("frame rect to client rect", client_rect.x, client_rect.y, client_rect.width, client_rect.height)
+        global.log("buffer rect is ", buffer_rect.x, buffer_rect.y, buffer_rect.width, buffer_rect.height)
+            // global.log("content rect is ", content_rect.x, content_rect.y, content_rect.width, content_rect.height)
+        global.log("bounds is ", JSON.stringify(bounds))
+        global.log("override is ", override)
+            // global.log("hints are ", hints)
