@@ -1,6 +1,7 @@
 // @add any new keyNames here
 const { EventManager } = require("./events");
 let eventMgr;
+let enabled = true
 
 function setEventMgr() {
     eventMgr = EventManager.instance;
@@ -16,6 +17,7 @@ const MAP = {
         id: "arrangKeyBinding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::arrangeKeyBinding");
                 eventMgr.arrange();
@@ -28,6 +30,7 @@ const MAP = {
         id: "focusKeyBinding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::focusKeyBinding");
                 eventMgr.focusToNextAlgorithmically();
@@ -40,6 +43,7 @@ const MAP = {
         id: "swapKeyBinding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::swapKeyBinding");
                 eventMgr.swapToNextAlgorithmically();
@@ -52,6 +56,7 @@ const MAP = {
         id: "moveKeyBinding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::moveKeyBinding");
                 eventMgr.moveInDirectionOfNextNode();
@@ -64,6 +69,7 @@ const MAP = {
         id: "halfScreenBinding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::halfScreen");
                 eventMgr.halfMaximize();
@@ -76,6 +82,7 @@ const MAP = {
         id: "fullScreenBinding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::fullScreen");
                 eventMgr.fullMaximize();
@@ -88,6 +95,7 @@ const MAP = {
         id: "unmaximizeBinding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::unmaximizeBinding");
                 eventMgr.unmaximize();
@@ -100,6 +108,7 @@ const MAP = {
         id: "minimizeBinding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::minimizeBinding");
                 eventMgr.minimize();
@@ -112,6 +121,7 @@ const MAP = {
         id: "moveSwitchWorkspace1Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::moveSwitchWorkspace1Binding");
                 eventMgr.moveSwitchWorkspace1()
@@ -124,6 +134,7 @@ const MAP = {
         id: "moveSwitchWorkspace2Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::moveSwitchWorkspace2Binding");
                 eventMgr.moveSwitchWorkspace2()
@@ -136,6 +147,7 @@ const MAP = {
         id: "moveSwitchWorkspace3Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::moveSwitchWorkspace3Binding");
                 eventMgr.moveSwitchWorkspace3()
@@ -148,6 +160,7 @@ const MAP = {
         id: "moveSwitchWorkspace4Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::moveSwitchWorkspace4Binding");
                 eventMgr.moveSwitchWorkspace4()
@@ -160,6 +173,7 @@ const MAP = {
         id: "moveSwitchWorkspace5Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::moveSwitchWorkspace5Binding");
                 eventMgr.moveSwitchWorkspace5()
@@ -172,6 +186,7 @@ const MAP = {
         id: "moveSwitchWorkspace6Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::moveSwitchWorkspace6Binding");
                 eventMgr.moveSwitchWorkspace6()
@@ -184,6 +199,7 @@ const MAP = {
         id: "moveSwitchWorkspace7Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::moveSwitchWorkspace7Binding");
                 eventMgr.moveSwitchWorkspace7()
@@ -196,6 +212,7 @@ const MAP = {
         id: "moveSwitchWorkspace8Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::moveSwitchWorkspace8Binding");
                 eventMgr.moveSwitchWorkspace8()
@@ -208,6 +225,7 @@ const MAP = {
         id: "moveSwitchWorkspace9Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::moveSwitchWorkspace9Binding");
                 eventMgr.moveSwitchWorkspace9()
@@ -220,6 +238,7 @@ const MAP = {
         id: "moveSwitchNextWorkspaceBinding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::moveSwitchNextWorkspaceBinding");
                 eventMgr.moveSwitchNextWorkspace()
@@ -232,6 +251,7 @@ const MAP = {
         id: "moveSwitchPrevWorkspaceBinding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::moveSwitchPrevWorkspaceBinding");
                 eventMgr.moveSwitchPrevWorkspace()
@@ -244,6 +264,7 @@ const MAP = {
         id: "switchWorkspace1Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::switchWorkspace1Binding");
                 eventMgr.switchWorkspace1()
@@ -256,6 +277,7 @@ const MAP = {
         id: "switchWorkspace2Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::switchWorkspace2Binding");
                 eventMgr.switchWorkspace2()
@@ -268,6 +290,7 @@ const MAP = {
         id: "switchWorkspace3Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::switchWorkspace3Binding");
                 eventMgr.switchWorkspace3()
@@ -280,6 +303,7 @@ const MAP = {
         id: "switchWorkspace4Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::switchWorkspace4Binding");
                 eventMgr.switchWorkspace4()
@@ -292,6 +316,7 @@ const MAP = {
         id: "switchWorkspace5Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::switchWorkspace5Binding");
                 eventMgr.switchWorkspace5()
@@ -304,6 +329,7 @@ const MAP = {
         id: "switchWorkspace6Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::switchWorkspace6Binding");
                 eventMgr.switchWorkspace6()
@@ -316,6 +342,7 @@ const MAP = {
         id: "switchWorkspace7Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::switchWorkspace7Binding");
                 eventMgr.switchWorkspace7()
@@ -328,6 +355,7 @@ const MAP = {
         id: "switchWorkspace8Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::switchWorkspace8Binding");
                 eventMgr.switchWorkspace8()
@@ -340,6 +368,7 @@ const MAP = {
         id: "switchWorkspace9Binding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::switchWorkspace9Binding");
                 eventMgr.switchWorkspace9()
@@ -352,6 +381,7 @@ const MAP = {
         id: "switchNextWorkspaceBinding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::switchNextWorkspaceBinding");
                 eventMgr.switchNextWorkspace()
@@ -364,6 +394,7 @@ const MAP = {
         id: "switchPrevWorkspaceBinding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::switchPrevWorkspaceBinding");
                 eventMgr.switchPrevWorkspace()
@@ -376,11 +407,24 @@ const MAP = {
         id: "killBinding",
         kind: "binding",
         event: () => {
+            if (!enabled) return
             try {
                 global.log("Event::killBinding");
                 eventMgr.kill()
             } catch (e) {
                 global.log("error in Event::killBinding", e.message);
+            }
+        },
+    },
+    toggleExtensionBinding: {
+        id: "toggleExtensionBinding",
+        kind: "binding",
+        event: () => {
+            try {
+                global.log("Event::toggleExtensionBinding");
+                enabled = !enabled;
+            } catch (e) {
+                global.log("error in Event::toggleExtensionBinding", e.message);
             }
         },
     }

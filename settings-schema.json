@@ -18,7 +18,7 @@
         },
         "application-settings": {
             "type": "page",
-            "title": "Applications",
+            "title": "Other",
             "sections": ["application-section"]
         },
         "window-section": {
@@ -72,8 +72,12 @@
         },
         "application-section": {
             "type": "section",
-            "title": "Configure hotkeys for opening common applications\nYou can do this by going to : System Settings>Keyboard>Shortcuts>CustomShortcuts",
-            "keys": ["custom-shortcuts-button"]
+            "title": "Other settings",
+            "keys": [
+                "shortcutConfigureNote",
+                "custom-shortcuts-button",
+                "toggleExtensionBinding"
+            ]
         }
     },
     "arrangeKeyBinding": {
@@ -235,5 +239,14 @@
         "type": "button",
         "description": "Open Keyboard Settings",
         "callback": "custom_shortcuts"
+    },
+    "shortcutConfigureNote": {
+        "type": "label",
+        "description": "Configure hotkeys for opening common applications\nYou can do this by going to: System Settings > Keyboard > Shortcuts > CustomShortcuts"
+    },
+    "toggleExtensionBinding": {
+        "type": "keybinding",
+        "description": "Enable/disable the extension",
+        "default": "<Super>Backspace"
     }
 }
