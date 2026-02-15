@@ -1,18 +1,20 @@
 const { WindowManager } = require("./window");
 class EventManager {
     windowMgr;
-    cyclingEnabled
+    cyclingEnabled;
+    appendEnabled;
     static inst;
-    static instance(cyclingEnabled) {
+    static instance(cyclingEnabled, appendEnabled) {
         if (EventManager.inst) {
             return EventManager.inst;
         } else {
-            return (EventManager.inst = new EventManager(cyclingEnabled));
+            return (EventManager.inst = new EventManager(cyclingEnabled, appendEnabled));
         }
     }
 
-    constructor(cyclingEnabled) {
+    constructor(cyclingEnabled, appendEnabled) {
         this.cyclingEnabled = cyclingEnabled;
+        this.appendEnabled = appendEnabled;
         this.windowMgr = WindowManager.instance;
     }
 
@@ -84,6 +86,8 @@ class EventManager {
         let index = global.screen.get_active_workspace_index() + 1;
         if (index == global.workspace_manager.n_workspaces && this.cyclingEnabled()) {
             this.windowMgr.moveToWorkspace(1);
+        } else if (index == global.workspace_manager.n_workspaces && !this.appendEnabled()) {
+            return;
         } else {
             this.windowMgr.moveToWorkspace(index + 1);
         }
@@ -132,6 +136,8 @@ class EventManager {
         global.log("calling switch ")
         if (index == global.workspace_manager.n_workspaces && this.cyclingEnabled()) {
             this.windowMgr.switchWorkspace(1);
+        } else if (index == global.workspace_manager.n_workspaces && !this.appendEnabled()) {
+            return;
         } else {
             this.windowMgr.switchWorkspace(index + 1);
         }

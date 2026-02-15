@@ -19,10 +19,13 @@ class KeyHandler {
             settings.bindProperty(Settings.BindingDirection.IN, key, key, () => this.updateKeybinding(key), null);
         }
         this.updateAllKeyBindings();
-        setEventMgr(Lang.bind(this, this.cyclingEnabled))
+        setEventMgr(Lang.bind(this, this.cyclingEnabled), Lang.bind(this, this.appendEnabled))
     }
     cyclingEnabled() {
         return this.settingsMap.cyclingEnabled;
+    }
+    appendEnabled() {
+        return this.settingsMap.appendEnabled;
     }
     updateKeybinding(key) {
         if (this.keyMap[key] && this.settingsMap[key].length > 0 && this.keyMap[key].kind == "binding") {

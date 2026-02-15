@@ -4,8 +4,8 @@ let eventMgr;
 let enabled = true
 let enableChangedCallback = () => {}
 
-function setEventMgr(cyclingEnabled) {
-    eventMgr = EventManager.instance(cyclingEnabled);
+function setEventMgr(cyclingEnabled, appendEnabled = false) {
+    eventMgr = EventManager.instance(cyclingEnabled, appendEnabled);
 }
 
 function destroyEventMgr() {
@@ -444,6 +444,10 @@ const MAP = {
     },
     cyclingEnabled: {
         id: "cyclingEnabled",
+        kind: "checkbox"
+    },
+    appendEnabled: {
+        id: "appendEnabled",
         kind: "checkbox"
     }
 };
