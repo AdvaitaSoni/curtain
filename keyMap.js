@@ -4,8 +4,8 @@ let eventMgr;
 let enabled = true
 let enableChangedCallback = () => {}
 
-function setEventMgr() {
-    eventMgr = EventManager.instance;
+function setEventMgr(cyclingEnabled) {
+    eventMgr = EventManager.instance(cyclingEnabled);
 }
 
 function destroyEventMgr() {
@@ -441,5 +441,9 @@ const MAP = {
                 global.log("error in Event::toggleExtensionBinding", e.message);
             }
         },
+    },
+    cyclingEnabled: {
+        id: "cyclingEnabled",
+        kind: "checkbox"
     }
 };

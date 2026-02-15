@@ -14,7 +14,7 @@
         "workspace-settings": {
             "type": "page",
             "title": "Workspace",
-            "sections": ["workspace-section", "window-workspace-section"]
+            "sections": ["cycling-section", "workspace-section", "window-workspace-section"]
         },
         "application-settings": {
             "type": "page",
@@ -35,6 +35,11 @@
                 "minimizeBinding",
                 "killBinding"
             ]
+        },
+        "cycling-section": {
+            "type": "section",
+            "title": "Cycling",
+            "keys": ["cyclingEnabled"]
         },
         "workspace-section": {
             "type": "section",
@@ -248,5 +253,11 @@
         "type": "keybinding",
         "description": "Enable/disable the extension",
         "default": "<Super>Escape"
+    },
+    "cyclingEnabled": {
+        "type": "checkbox",
+        "value": "true",
+        "description": "Enable cycling on moving to next and previous workspace hotkeys",
+        "tooltip": "Enabling this option means while navigating using next and previous workspace Hotkeys, the last workspace will have the first workspace next to it and the first workspace will have the last workspace previous to it. To make a new workspace, simply specify the new workspace index."
     }
 }

@@ -1,6 +1,7 @@
 const Main = imports.ui.main;
 const GLib = imports.gi.GLib;
 const Settings = imports.ui.settings;
+const Lang = imports.lang
 const { MAP, setEventMgr, destroyEventMgr } = require("./keyMap")
 const { EVENT_GAP, UUID } = require("./constants") //Constants
 
@@ -8,7 +9,6 @@ class KeyHandler {
     keyMap; //has keys to event mapping
     settingsMap;
     constructor() {
-        setEventMgr()
         this.keyMap = MAP;
         this.settingsMap = {};
         for (const [key, _] of Object.entries(MAP)) {
@@ -19,6 +19,10 @@ class KeyHandler {
             settings.bindProperty(Settings.BindingDirection.IN, key, key, () => this.updateKeybinding(key), null);
         }
         this.updateAllKeyBindings();
+        setEventMgr(Lang.bind(this, this.cyclingEnabled))
+    }
+    cyclingEnabled() {
+        return this.settingsMap.cyclingEnabled;
     }
     updateKeybinding(key) {
         if (this.keyMap[key] && this.settingsMap[key].length > 0 && this.keyMap[key].kind == "binding") {
@@ -45,8 +49,6 @@ class KeyHandler {
             this.updateKeybinding(key);
         }
     }
-
-    //todo: remove all debug from repos for main branch
 
     destroyKey(key) {
         if (!this.keyMap[key]) { return }
