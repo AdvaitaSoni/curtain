@@ -152,6 +152,10 @@ class WindowManager {
         }
     }
 
+    getPanelHeight(panel) {
+        return panel.height || panel.actor.get_height();
+    }
+
     getUsableScreenArea(monitor) {
         let top = monitor.y;
         let bottom = monitor.y + monitor.height;
@@ -162,16 +166,16 @@ class WindowManager {
             if (!panel.isHideable()) {
                 switch (panel.panelPosition) {
                     case Panel.PanelLoc.top:
-                        top += getPanelHeight(panel);
+                        top += this.getPanelHeight(panel);
                         break;
                     case Panel.PanelLoc.bottom:
-                        bottom -= getPanelHeight(panel);
+                        bottom -= this.getPanelHeight(panel);
                         break;
                     case Panel.PanelLoc.left:
-                        left += getPanelHeight(panel); // even vertical panels use 'height'
+                        left += this.getPanelHeight(panel);
                         break;
                     case Panel.PanelLoc.right:
-                        right -= getPanelHeight(panel);
+                        right -= this.getPanelHeight(panel);
                         break;
                 }
             }
@@ -843,7 +847,12 @@ class WindowManager {
     }
     switchWorkspace(index) {
         if (index < 1) return
-        let workspace = global.screen.get_workspace_by_index(index - 1)
+        index--;
+        let workspacesCnt = global.workspace_manager.n_workspaces
+        if (workspacesCnt == index) {
+            global.workspace_manager.append_new_workspace(true, global.get_current_time())
+        }
+        let workspace = global.screen.get_workspace_by_index(index)
         workspace.activate(global.get_current_time());
     }
     closeWindow() {
