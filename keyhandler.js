@@ -14,7 +14,7 @@ class KeyHandler {
         for (const [key, _] of Object.entries(MAP)) {
             this.settingsMap[key] = null;
         }
-        let settings = new Settings.ExtensionSettings(this.settingsMap, UUID);
+        let settings = new Settings.AppletSettings(this.settingsMap, UUID);
         for (const [key, _] of Object.entries(this.settingsMap)) {
             settings.bindProperty(Settings.BindingDirection.IN, key, key, () => this.updateKeybinding(key), null);
         }

@@ -2,6 +2,7 @@
 const { EventManager } = require("./events");
 let eventMgr;
 let enabled = true
+let enableChangedCallback = () => {}
 
 function setEventMgr() {
     eventMgr = EventManager.instance;
@@ -10,6 +11,18 @@ function setEventMgr() {
 function destroyEventMgr() {
     eventMgr.destroy()
     eventMgr = null
+}
+
+function setEnabled(value) {
+    enabled = value
+}
+
+function getEnabled() {
+    return enabled
+}
+
+function setEnableChangedCallback(cb) {
+    enableChangedCallback = cb;
 }
 
 const MAP = {
@@ -423,6 +436,7 @@ const MAP = {
             try {
                 global.log("Event::toggleExtensionBinding");
                 enabled = !enabled;
+                enableChangedCallback()
             } catch (e) {
                 global.log("error in Event::toggleExtensionBinding", e.message);
             }
