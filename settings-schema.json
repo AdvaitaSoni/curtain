@@ -232,7 +232,7 @@
     },
     "killBinding": {
         "type": "keybinding",
-        "description": "close the focused window",
+        "description": "Close the focused window",
         "default": "<Super>k"
     },
     "custom-shortcuts-button": {
