@@ -247,6 +247,6 @@
     "toggleExtensionBinding": {
         "type": "keybinding",
         "description": "Enable/disable the extension",
-        "default": "<Super>Backspace"
+        "default": "<Super>Escape"
     }
 }
