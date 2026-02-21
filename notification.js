@@ -35,3 +35,7 @@ function sendNotification(intro, msg) {
     notification.setUrgency(MessageTray.Urgency.CRITICAL);
     source.notify(notification);
 }
+
+function toggledExtensionStateNotification(state) {
+    sendNotification("Curtain", `Extension ${state == true ? "Enabled" : "Disabled"}!`)
+}

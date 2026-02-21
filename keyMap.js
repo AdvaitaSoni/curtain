@@ -5,7 +5,6 @@ let enabled = true
 let enableChangedCallback = () => {}
 
 function setEventMgr(cyclingEnabled, appendEnabled) {
-    global.log("************************inside setEventMgr cycling and append is", typeof cyclingEnabled, typeof appendEnabled)
     eventMgr = EventManager.instance(cyclingEnabled, appendEnabled);
 }
 
@@ -33,7 +32,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::arrangeKeyBinding");
                 eventMgr.arrange();
             } catch (e) {
                 global.log("error in Event::arrangeKeyBinding", e.message);
@@ -46,7 +44,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::focusKeyBinding");
                 eventMgr.focusToNextAlgorithmically();
             } catch (e) {
                 global.log("error in Event::focusKeyBinding", e.message);
@@ -59,7 +56,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::swapKeyBinding");
                 eventMgr.swapToNextAlgorithmically();
             } catch (e) {
                 global.log("error in Event::swapKeyBinding", e.message);
@@ -72,7 +68,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::moveKeyBinding");
                 eventMgr.moveInDirectionOfNextNode();
             } catch (e) {
                 global.log("error in Event::moveKeyBinding", e.message);
@@ -85,7 +80,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::halfScreen");
                 eventMgr.halfMaximize();
             } catch (e) {
                 global.log("error in Event::halfScreen", e.message);
@@ -98,7 +92,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::fullScreen");
                 eventMgr.fullMaximize();
             } catch (e) {
                 global.log("error in Event::fullScreen", e.message);
@@ -111,7 +104,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::unmaximizeBinding");
                 eventMgr.unmaximize();
             } catch (e) {
                 global.log("error in Event::unmaximizeBinding", e.message);
@@ -124,7 +116,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::minimizeBinding");
                 eventMgr.minimize();
             } catch (e) {
                 global.log("error in Event::minimizeBinding", e.message);
@@ -137,7 +128,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::moveSwitchWorkspace1Binding");
                 eventMgr.moveSwitchWorkspace1()
             } catch (e) {
                 global.log("error in Event::moveSwitchWorkspace1Binding", e.message);
@@ -150,7 +140,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::moveSwitchWorkspace2Binding");
                 eventMgr.moveSwitchWorkspace2()
             } catch (e) {
                 global.log("error in Event::moveSwitchWorkspace2Binding", e.message);
@@ -163,7 +152,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::moveSwitchWorkspace3Binding");
                 eventMgr.moveSwitchWorkspace3()
             } catch (e) {
                 global.log("error in Event::moveSwitchWorkspace3Binding", e.message);
@@ -176,7 +164,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::moveSwitchWorkspace4Binding");
                 eventMgr.moveSwitchWorkspace4()
             } catch (e) {
                 global.log("error in Event::moveSwitchWorkspace4Binding", e.message);
@@ -189,7 +176,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::moveSwitchWorkspace5Binding");
                 eventMgr.moveSwitchWorkspace5()
             } catch (e) {
                 global.log("error in Event::moveSwitchWorkspace5Binding", e.message);
@@ -202,7 +188,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::moveSwitchWorkspace6Binding");
                 eventMgr.moveSwitchWorkspace6()
             } catch (e) {
                 global.log("error in Event::moveSwitchWorkspace6Binding", e.message);
@@ -215,7 +200,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::moveSwitchWorkspace7Binding");
                 eventMgr.moveSwitchWorkspace7()
             } catch (e) {
                 global.log("error in Event::moveSwitchWorkspace7Binding", e.message);
@@ -228,7 +212,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::moveSwitchWorkspace8Binding");
                 eventMgr.moveSwitchWorkspace8()
             } catch (e) {
                 global.log("error in Event::moveSwitchWorkspace8Binding", e.message);
@@ -241,7 +224,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::moveSwitchWorkspace9Binding");
                 eventMgr.moveSwitchWorkspace9()
             } catch (e) {
                 global.log("error in Event::moveSwitchWorkspace9Binding", e.message);
@@ -254,7 +236,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::moveSwitchNextWorkspaceBinding");
                 eventMgr.moveSwitchNextWorkspace()
             } catch (e) {
                 global.log("error in Event::moveSwitchNextWorkspaceBinding", e.message);
@@ -267,7 +248,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::moveSwitchPrevWorkspaceBinding");
                 eventMgr.moveSwitchPrevWorkspace()
             } catch (e) {
                 global.log("error in Event::moveSwitchPrevWorkspaceBinding", e.message);
@@ -280,7 +260,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::switchWorkspace1Binding");
                 eventMgr.switchWorkspace1()
             } catch (e) {
                 global.log("error in Event::switchWorkspace1Binding", e.message);
@@ -293,7 +272,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::switchWorkspace2Binding");
                 eventMgr.switchWorkspace2()
             } catch (e) {
                 global.log("error in Event::switchWorkspace2Binding", e.message);
@@ -306,7 +284,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::switchWorkspace3Binding");
                 eventMgr.switchWorkspace3()
             } catch (e) {
                 global.log("error in Event::switchWorkspace3Binding", e.message);
@@ -319,7 +296,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::switchWorkspace4Binding");
                 eventMgr.switchWorkspace4()
             } catch (e) {
                 global.log("error in Event::switchWorkspace4Binding", e.message);
@@ -332,7 +308,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::switchWorkspace5Binding");
                 eventMgr.switchWorkspace5()
             } catch (e) {
                 global.log("error in Event::switchWorkspace5Binding", e.message);
@@ -345,7 +320,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::switchWorkspace6Binding");
                 eventMgr.switchWorkspace6()
             } catch (e) {
                 global.log("error in Event::switchWorkspace6Binding", e.message);
@@ -358,7 +332,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::switchWorkspace7Binding");
                 eventMgr.switchWorkspace7()
             } catch (e) {
                 global.log("error in Event::switchWorkspace7Binding", e.message);
@@ -371,7 +344,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::switchWorkspace8Binding");
                 eventMgr.switchWorkspace8()
             } catch (e) {
                 global.log("error in Event::switchWorkspace8Binding", e.message);
@@ -384,7 +356,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::switchWorkspace9Binding");
                 eventMgr.switchWorkspace9()
             } catch (e) {
                 global.log("error in Event::switchWorkspace9Binding", e.message);
@@ -397,7 +368,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::switchNextWorkspaceBinding");
                 eventMgr.switchNextWorkspace()
             } catch (e) {
                 global.log("error in Event::switchNextWorkspaceBinding", e.message);
@@ -410,7 +380,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::switchPrevWorkspaceBinding");
                 eventMgr.switchPrevWorkspace()
             } catch (e) {
                 global.log("error in Event::switchPrevWorkspaceBinding", e.message);
@@ -423,7 +392,6 @@ const MAP = {
         event: () => {
             if (!enabled) return
             try {
-                global.log("Event::killBinding");
                 eventMgr.kill()
             } catch (e) {
                 global.log("error in Event::killBinding", e.message);
@@ -437,7 +405,8 @@ const MAP = {
             try {
                 global.log("Event::toggleExtensionBinding");
                 enabled = !enabled;
-                enableChangedCallback("hi", "bye")
+                enableChangedCallback(enabled)
+                global.log("Extension is ", enabled ? "Enabled" : "Disabled")
             } catch (e) {
                 global.log("error in Event::toggleExtensionBinding", e.message);
             }

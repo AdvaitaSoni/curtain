@@ -1,7 +1,7 @@
 const key = require("./keyhandler");
 const Util = imports.misc.util;
-const { getEnabled, setEnableChangedCallback } = require("./keyMap")
-const { sendNotification } = require("./notification")
+const { setEnableChangedCallback } = require("./keyMap")
+const { toggledExtensionStateNotification } = require("./notification")
     //------------------------ GLOBAL OBJECTS
 let extension;
 
@@ -10,9 +10,11 @@ class myExtension {
     keyHandler;
     constructor() {
         this.keyHandler = new key.KeyHandler();
-        setEnableChangedCallback(sendNotification)
+        toggledExtensionStateNotification(true)
+        setEnableChangedCallback(toggledExtensionStateNotification)
     }
     destroy() {
+        toggledExtensionStateNotification(false)
         this.keyHandler.destroy();
         this.keyHandler = null;
     }
@@ -21,7 +23,6 @@ class myExtension {
 // -------------------------------SETUP FUNCTIONS
 function init(metadata) {
     try {
-        global.log("creating a new extension")
         extension = new myExtension();
     } catch (e) {
         global.log("error in init function ", e.message);
@@ -30,7 +31,6 @@ function init(metadata) {
 
 function enable() {
     try {
-        global.log("creating a new extension")
         if (!extension) extension = new myExtension();
     } catch (e) {
         global.log("error in enable function ", e.message);
