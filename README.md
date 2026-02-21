@@ -1,4 +1,4 @@
-# Curtain Extension for Cinnamon
+# Curtain Applet for Cinnamon
 ## Table Of Contents
 - [**A. Introduction**](#a-introduction)
 - [**B. Get Started**](#b-get-started)
@@ -8,7 +8,7 @@
 
 
 ## A. Introduction
-The **Curtain** extension for Cinnamon is designed to be a lightweight,fast and easy to install and configure alternative to popular window managers. Essentially, it is aimed to completely navigate workspaces and windows using only the keyboard.
+The **Curtain** applet for Cinnamon is designed to be a lightweight,fast and easy to install and configure alternative to popular window managers. Essentially, it is aimed to completely navigate workspaces and windows using only the keyboard.
 ![Curtain screenshot](screenshot.png)
 
 ## B. Get Started
@@ -16,7 +16,7 @@ The **Curtain** extension for Cinnamon is designed to be a lightweight,fast and 
 Due to individual windows not following **Curtain** rules ,it is advisable the following applications are preferred: 
 - kitty over gnome-terminal
 ### 2. KeyBindings
-While you can set up your own keybindings as you like by going to Extension -> Settings(Curtain), one of the settings that can help you get started quickly is as follows: 
+While you can set up your own keybindings as you like by going to Applet -> Settings(Curtain), one of the settings that can help you get started quickly is as follows: 
 - **Switch Workspaces** : ```Super + 1-9```
 - **Move Windows To A Workspace** : ```Super+Shift+1-9```
 - **Navigate between next and previous workspaces** : ```Super + R/T``` for switching and```Super + Shift + R/T``` and for moving focused window  (R for previous and T for next workspace)
@@ -59,15 +59,11 @@ While you can set up your own keybindings as you like by going to Extension -> S
 - If the windows are in arranged fashion i.e no sizing and position of any window is changed, then the newly opened windows also open in [Half Window Fashion](#half-window-manager). 
 - **Note - this is only possible when the windows themselves allow resizing and positioning. If any of the opened windows(newly opened or already opened) cannot resize or position itself according to the algorithm, the automatic arrangement fails and windows are opened/resized randomly. This is especially true for applications like gnome-terminal which only resizes itself vertically in multiple of font size and winddows having a set minimum size."**
 
-<!-- ### See the applet status
-- See whether the extension is enabled or not, current workspace index, as well as total workspaces
-![screenshot for panel](screenshot.png) -->
-
 ### 5. Fully customizable
 - The keys for performing all the action are fully customizable 
 
 ## D. Half Window Manager
-The **Curtain** extension arranges the windows using the following rules: 
+The **Curtain** applet arranges the windows using the following rules: 
 - Sort the windows by their size. If two windows are of same size the one that is on left or top comes first
 - Windows are arranged starting from the full screen
 - Arrange the 1st window in half screen either vertically(top or bottom) or horizontally(left or right) depending upon whether the remaining area has lower width(vertically) or lower height(horizontally)
