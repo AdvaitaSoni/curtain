@@ -1,8 +1,8 @@
 const key = require("./keyhandler");
 const Util = imports.misc.util;
 const { getEnabled, setEnableChangedCallback } = require("./keyMap")
-
-//------------------------ GLOBAL OBJECTS
+const { sendNotification } = require("./notification")
+    //------------------------ GLOBAL OBJECTS
 let extension;
 
 //------------------------- EXTENSION
@@ -10,6 +10,7 @@ class myExtension {
     keyHandler;
     constructor() {
         this.keyHandler = new key.KeyHandler();
+        setEnableChangedCallback(sendNotification)
     }
     destroy() {
         this.keyHandler.destroy();

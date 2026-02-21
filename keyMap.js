@@ -5,7 +5,7 @@ let enabled = true
 let enableChangedCallback = () => {}
 
 function setEventMgr(cyclingEnabled, appendEnabled) {
-    global.log("************************inside setEventMgr cycling and append is",typeof cyclingEnabled,typeof appendEnabled)
+    global.log("************************inside setEventMgr cycling and append is", typeof cyclingEnabled, typeof appendEnabled)
     eventMgr = EventManager.instance(cyclingEnabled, appendEnabled);
 }
 
@@ -437,7 +437,7 @@ const MAP = {
             try {
                 global.log("Event::toggleExtensionBinding");
                 enabled = !enabled;
-                enableChangedCallback()
+                enableChangedCallback("hi", "bye")
             } catch (e) {
                 global.log("error in Event::toggleExtensionBinding", e.message);
             }
