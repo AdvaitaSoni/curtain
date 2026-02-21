@@ -1,5 +1,4 @@
 # Introduction
-
 - Most of the code of Linux Mint is written in C. Extensions, however, are written in js. So to include the APIs written in C in extensions,applets,desklets etc. we use something called as cjs. It is almost js but with access to mint APIs
 - to import code written in another file(.js) we use `imports` statement. e.g
 
